@@ -18,9 +18,10 @@ export default function ParticleCanvas({ overrideColor = null }) {
         const ctx = canvas.getContext('2d')
 
         // ═══ CONFIG ═══
-        const DUST_COUNT = 180
-        const ORB_COUNT = 18
-        const NEBULA_COUNT = 5
+        const isMobile = window.innerWidth <= 768;
+        const DUST_COUNT = isMobile ? 80 : 180;
+        const ORB_COUNT = isMobile ? 8 : 18;
+        const NEBULA_COUNT = isMobile ? 3 : 5;
         const SHOOT_INTERVAL = 3500
         const METEOR_INTERVAL = 8000
         const COMET_INTERVAL = 12000
@@ -310,7 +311,9 @@ export default function ParticleCanvas({ overrideColor = null }) {
             }
         }
         function drawLines(particles) {
-            const checked = new Set()
+            const checked = new Set();
+            let hasLines = false;
+            ctx.beginPath();
             for (let i = 0; i < particles.length; i++) {
                 const p = particles[i], gx = Math.floor(p.x / CONNECT_DIST), gy = Math.floor(p.y / CONNECT_DIST)
                 for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) {
@@ -320,11 +323,16 @@ export default function ParticleCanvas({ overrideColor = null }) {
                         if (j <= i) continue; const pk = i + '-' + j; if (checked.has(pk)) continue; checked.add(pk)
                         const q = particles[j], ddx = p.x - q.x, ddy = p.y - q.y, dist = Math.sqrt(ddx * ddx + ddy * ddy)
                         if (dist < CONNECT_DIST) {
-                            ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y)
-                            ctx.strokeStyle = primaryColor((1 - dist / CONNECT_DIST) * 0.1); ctx.lineWidth = 0.4; ctx.stroke()
+                            ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+                            hasLines = true;
                         }
                     }
                 }
+            }
+            if (hasLines) {
+                ctx.strokeStyle = primaryColor(0.08);
+                ctx.lineWidth = 0.4;
+                ctx.stroke();
             }
         }
 
