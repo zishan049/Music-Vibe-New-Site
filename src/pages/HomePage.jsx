@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import SocialLinks from '../components/SocialLinks/SocialLinks'
 import GlareCard from '../components/GlareCard/GlareCard'
@@ -8,13 +7,6 @@ import DecryptedText from '../components/DecryptedText/DecryptedText'
 import tracks from '../data/tracks.json'
 
 export default function HomePage() {
-    // Preload all artwork images in background for faster Music page load
-    useEffect(() => {
-        tracks.forEach(track => {
-            const img = new Image()
-            img.src = `/Assets/Artwork/${track.artwork}`
-        })
-    }, [])
 
     return (
         <div id="home-content">
