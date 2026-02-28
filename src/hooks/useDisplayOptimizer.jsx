@@ -1,14 +1,17 @@
 import { useEffect, useState, useRef } from 'react';
 
 /**
- * useDisplayOptimizer — Full-power display optimizer that maintains 60 FPS
+ * useDisplayOptimizer — Strict 60 FPS display optimizer
  * 
  * Features:
- * - Instant (no debounce) viewport scaling with --vh and --scale-factor
- * - Active FPS monitoring via requestAnimationFrame
- * - Dynamic quality controls (--perf-quality, --perf-blur-allowed, --perf-animation-speed)
- * - Automatic quality degradation when FPS drops, restoration when stable
- * - Device classification (mobile/tablet/desktop) and resolution detection
+ * - Instant viewport scaling (--vh, --scale-factor) with NO debounce
+ * - Aggressive rAF-based FPS monitoring with tight 60 FPS target
+ * - Fast reaction: drops quality within 5 frames of detecting jank
+ * - Frame budget tracking: each frame has a 16.67ms budget
+ * - Jank detection: flags individual frames > 20ms as jank
+ * - Dynamic quality controls via CSS vars and data attributes
+ * - Automatic quality restoration after sustained 60 FPS
+ * - GPU compositing hints on animated elements (safe for existing transforms)
  */
 export default function useDisplayOptimizer() {
     const [dimensions, setDimensions] = useState({
@@ -17,9 +20,10 @@ export default function useDisplayOptimizer() {
     });
 
     const fpsRef = useRef({
-        frames: [],
+        frameTimes: [],        // Last N frame deltas (ms)
+        jankCount: 0,          // Consecutive janky frames
         quality: 'high',       // high | medium | low
-        stableFrames: 0,        // count of consecutive stable frames for quality restore
+        stableCount: 0,        // Consecutive good frames for quality restore
         lastFrameTime: 0,
         animId: null,
     });
@@ -30,22 +34,29 @@ export default function useDisplayOptimizer() {
         const root = document.documentElement;
         const fps = fpsRef.current;
 
-        // ═══ VIEWPORT HANDLER (instant, no debounce) ═══
+        // ═══ CONSTANTS ═══
+        const JANK_THRESHOLD_MS = 20;        // Frame > 20ms = jank
+        const SEVERE_JANK_MS = 33;           // Frame > 33ms = severe jank (below 30fps)
+        const WINDOW_SIZE = 20;              // Rolling window for FPS averaging
+        const QUICK_REACT_FRAMES = 5;        // Drop quality after this many janky frames
+        const RESTORE_FRAMES = 180;          // ~3 seconds at 60fps before restoring quality
+
+        // ═══ VIEWPORT HANDLER (instant, zero debounce) ═══
         const handleResize = () => {
             const width = window.innerWidth;
             const height = window.innerHeight;
             setDimensions({ width, height });
 
-            // 1. Fix mobile viewport height (100vh includes address bar on iOS/Android)
+            // 1. Mobile viewport height fix
             const vh = height * 0.01;
             root.style.setProperty('--vh', `${vh}px`);
 
-            // 2. Scale multiplier based on 1920 base width
+            // 2. Scale multiplier (base 1920)
             const rawScale = width / 1920;
             const scale = Math.max(0.4, Math.min(rawScale, 1.5));
             root.style.setProperty('--scale-factor', scale);
 
-            // 3. Device breakpoint flags
+            // 3. Device breakpoints
             const isMobile = width <= 768;
             const isTablet = width > 768 && width <= 1024;
             const isDesktop = width > 1024;
@@ -62,7 +73,7 @@ export default function useDisplayOptimizer() {
                 document.body.setAttribute('data-device', 'desktop');
             }
 
-            // 4. Super-wide / Ultra-HD
+            // 4. Ultra-wide detection
             if (width > 2560) {
                 document.body.setAttribute('data-resolution', 'ultrawide');
             } else {
@@ -70,10 +81,9 @@ export default function useDisplayOptimizer() {
             }
         };
 
-        // Initialize viewport immediately
         handleResize();
 
-        // ═══ FPS MONITORING LOOP ═══
+        // ═══ QUALITY CONTROL ═══
         function setQuality(level) {
             if (fps.quality === level) return;
             fps.quality = level;
@@ -84,62 +94,90 @@ export default function useDisplayOptimizer() {
                     root.style.setProperty('--perf-blur-allowed', '1');
                     root.style.setProperty('--perf-animation-speed', '1');
                     root.style.setProperty('--perf-particle-density', '1');
+                    root.style.setProperty('--perf-transition-allowed', '1');
+                    root.style.setProperty('--perf-shadow-allowed', '1');
                     break;
                 case 'medium':
                     root.style.setProperty('--perf-blur-allowed', '0');
-                    root.style.setProperty('--perf-animation-speed', '1.3');
-                    root.style.setProperty('--perf-particle-density', '0.7');
+                    root.style.setProperty('--perf-animation-speed', '1.5');
+                    root.style.setProperty('--perf-particle-density', '0.6');
+                    root.style.setProperty('--perf-transition-allowed', '1');
+                    root.style.setProperty('--perf-shadow-allowed', '1');
                     break;
                 case 'low':
                     root.style.setProperty('--perf-blur-allowed', '0');
-                    root.style.setProperty('--perf-animation-speed', '2');
-                    root.style.setProperty('--perf-particle-density', '0.4');
+                    root.style.setProperty('--perf-animation-speed', '2.5');
+                    root.style.setProperty('--perf-particle-density', '0.3');
+                    root.style.setProperty('--perf-transition-allowed', '0');
+                    root.style.setProperty('--perf-shadow-allowed', '0');
                     break;
             }
         }
 
-        // Start at high quality
         setQuality('high');
 
+        // ═══ FPS MONITOR LOOP ═══
         function fpsLoop(now) {
             if (fps.lastFrameTime > 0) {
                 const delta = now - fps.lastFrameTime;
-                const currentFps = 1000 / delta;
 
-                // Keep rolling window of last 30 frames
-                fps.frames.push(currentFps);
-                if (fps.frames.length > 30) fps.frames.shift();
+                // Track frame times in rolling window
+                fps.frameTimes.push(delta);
+                if (fps.frameTimes.length > WINDOW_SIZE) fps.frameTimes.shift();
 
-                // Average FPS over the window
-                if (fps.frames.length >= 10) {
-                    const avgFps = fps.frames.reduce((a, b) => a + b, 0) / fps.frames.length;
+                // Individual frame jank detection
+                const isJanky = delta > JANK_THRESHOLD_MS;
+                const isSevereJank = delta > SEVERE_JANK_MS;
 
-                    if (avgFps < 40) {
-                        // Critical FPS drop — go to low quality immediately
+                if (isSevereJank) {
+                    // Severe jank — immediate quality drop
+                    fps.jankCount += 3; // Weight severe jank heavily
+                    fps.stableCount = 0;
+                } else if (isJanky) {
+                    fps.jankCount++;
+                    fps.stableCount = 0;
+                } else {
+                    // Good frame
+                    fps.jankCount = Math.max(0, fps.jankCount - 1); // Slowly recover jank counter
+                    fps.stableCount++;
+                }
+
+                // React quickly to sustained jank
+                if (fps.jankCount >= QUICK_REACT_FRAMES) {
+                    if (fps.quality === 'high') {
+                        setQuality('medium');
+                    } else if (fps.quality === 'medium') {
                         setQuality('low');
-                        fps.stableFrames = 0;
-                    } else if (avgFps < 52) {
-                        // Moderate FPS drop
-                        if (fps.quality === 'high') {
-                            setQuality('medium');
-                        } else if (fps.quality === 'medium') {
-                            setQuality('low');
-                        }
-                        fps.stableFrames = 0;
-                    } else if (avgFps >= 57) {
-                        // Stable high FPS — count up for quality restore
-                        fps.stableFrames++;
-
-                        // After ~2 seconds (120 frames at 60fps) of stability, try restoring
-                        if (fps.stableFrames > 120) {
-                            if (fps.quality === 'low') {
-                                setQuality('medium');
-                            } else if (fps.quality === 'medium') {
-                                setQuality('high');
-                            }
-                            fps.stableFrames = 0;
-                        }
                     }
+                    fps.jankCount = 0;
+                    fps.stableCount = 0;
+                }
+
+                // Also check average FPS from the window
+                if (fps.frameTimes.length >= WINDOW_SIZE) {
+                    const avgDelta = fps.frameTimes.reduce((a, b) => a + b, 0) / fps.frameTimes.length;
+                    const avgFps = 1000 / avgDelta;
+
+                    if (avgFps < 45) {
+                        // Average is critically low — force to lowest
+                        setQuality('low');
+                        fps.stableCount = 0;
+                        fps.jankCount = 0;
+                    } else if (avgFps < 55 && fps.quality === 'high') {
+                        // Not hitting 60 target — drop one level
+                        setQuality('medium');
+                        fps.stableCount = 0;
+                    }
+                }
+
+                // Restore quality after sustained good performance
+                if (fps.stableCount >= RESTORE_FRAMES) {
+                    if (fps.quality === 'low') {
+                        setQuality('medium');
+                    } else if (fps.quality === 'medium') {
+                        setQuality('high');
+                    }
+                    fps.stableCount = 0;
                 }
             }
 
@@ -148,6 +186,24 @@ export default function useDisplayOptimizer() {
         }
 
         fps.animId = requestAnimationFrame(fpsLoop);
+
+        // ═══ GPU COMPOSITING HINTS ═══
+        // Force GPU layers on key animated elements for better compositing
+        // NOTE: Don't override transform on elements that use it for positioning (e.g. dock)
+        requestAnimationFrame(() => {
+            const gpuElements = document.querySelectorAll(
+                '.zl-overlay, .zl-p1, .zl-p2, #particle-canvas, .particle-canvas'
+            );
+            gpuElements.forEach(el => {
+                el.style.willChange = 'transform, opacity';
+                if (!el.style.transform) {
+                    el.style.transform = 'translateZ(0)';
+                }
+            });
+            // Dock: only add will-change, don't touch transform (it uses translateX(-50%))
+            const dock = document.querySelector('.dock-container');
+            if (dock) dock.style.willChange = 'opacity';
+        });
 
         // ═══ EVENT LISTENERS ═══
         window.addEventListener('resize', handleResize);

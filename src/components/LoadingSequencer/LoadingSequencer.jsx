@@ -12,13 +12,8 @@ import './LoadingSequencer.css'
  *          Only exits after preload is confirmed complete
  */
 
-// Build the full list of images to preload
-const PRELOAD_IMAGES = [
-    '/Assets/musicvibe.png',
-    '/Assets/amazon.svg',
-    '/Assets/Transparent Logo.png',
-    ...tracks.map(t => `/Assets/Artwork/${t.artwork}`),
-]
+// Only preload artwork images from /Assets/Artwork/
+const PRELOAD_IMAGES = tracks.map(t => `/Assets/Artwork/${t.artwork}`)
 
 const SOCIAL_PILLS = [
     { key: 'instagram', color: '#E1306C', shadow: 'rgba(225, 48, 108, 0.4)' },
@@ -62,16 +57,22 @@ export default function LoadingSequencer() {
         }
     }, [visible])
 
-    // Phase 2 exit: only fire AFTER preload is complete AND we've reached reposition phase
+    // Phase 2 exit: fire after reaching reposition phase
+    // Prefers waiting for preload, but has a hard 3s max wait to never get stuck
     useEffect(() => {
         if (!visible) return
         if (phase !== 'phase2-reposition') return
-        if (!preloadDone) return
 
-        // Preload is done and we're at reposition — start exit after 1.5s
-        const exitTimer = setTimeout(() => setPhase('phase2-exit'), 1500)
+        if (preloadDone) {
+            // Preload already done — exit after 1.5s
+            const exitTimer = setTimeout(() => setPhase('phase2-exit'), 1500)
+            return () => clearTimeout(exitTimer)
+        }
 
-        return () => clearTimeout(exitTimer)
+        // Preload not done yet — hard timeout: exit after 3s regardless
+        const hardTimeout = setTimeout(() => setPhase('phase2-exit'), 3000)
+
+        return () => clearTimeout(hardTimeout)
     }, [visible, phase, preloadDone])
 
     // Done: Remove from DOM after exit animation
