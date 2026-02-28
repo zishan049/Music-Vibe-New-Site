@@ -1,0 +1,209 @@
+/* ==========================================================
+   LOADING SCREEN SOCIAL ICONS
+   ========================================================== */
+
+/* --- Social Icons Container --- */
+#zoundz-loader .zl-socials {
+    display: flex;
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    flex-wrap: wrap;
+    /* Wrap on small screens */
+    gap: 12px;
+    margin-top: 30px;
+    /* Increased margin for clear separation */
+    perspective: 1000px;
+    /* Ensure it's above other elements if needed */
+    z-index: 100001;
+    /* High z-index to be safe */
+    position: relative;
+    width: 100%;
+    /* Full width to center properly */
+}
+
+/* --- Social Pill --- */
+#zoundz-loader .zl-social-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    /* Slightly larger for visibility */
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    color: #ffffff;
+    /* Explicit white text */
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    cursor: default;
+    /* Visual only */
+
+    /* Initial: hidden, pushed down */
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+    /* Start slightly down */
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    will-change: transform, opacity;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+#zoundz-loader .zl-social-pill svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor !important;
+    /* Force to current color (white) */
+    z-index: 2;
+    position: relative;
+    display: block;
+    /* Ensure it takes up space */
+}
+
+#zoundz-loader .zl-social-pill .pill-text {
+    color: #ffffff !important;
+    z-index: 2;
+    position: relative;
+}
+
+/* --- Pill Colors (Visual only) --- */
+#zoundz-loader .zl-social-pill.instagram {
+    background: #E1306C;
+    box-shadow: 0 0 15px rgba(225, 48, 108, 0.4);
+    border-color: rgba(225, 48, 108, 0.3);
+}
+
+#zoundz-loader .zl-social-pill.spotify {
+    background: #1DB954;
+    box-shadow: 0 0 15px rgba(29, 185, 84, 0.4);
+    border-color: rgba(29, 185, 84, 0.3);
+}
+
+#zoundz-loader .zl-social-pill.apple {
+    background: #FA2D48;
+    box-shadow: 0 0 15px rgba(250, 45, 72, 0.4);
+    border-color: rgba(250, 45, 72, 0.3);
+}
+
+#zoundz-loader .zl-social-pill.bandlab {
+    background: #40BAFF;
+    box-shadow: 0 0 20px rgba(64, 186, 255, 0.6);
+    border-color: rgba(64, 186, 255, 0.3);
+}
+
+#zoundz-loader .zl-social-pill.amazon {
+    background: #00A8E1;
+    box-shadow: 0 0 15px rgba(0, 168, 225, 0.4);
+    border-color: rgba(0, 168, 225, 0.3);
+}
+
+#zoundz-loader .zl-social-pill.soundcloud {
+    background: #FF5500;
+    box-shadow: 0 0 15px rgba(255, 85, 0, 0.4);
+    border-color: rgba(255, 85, 0, 0.3);
+}
+
+#zoundz-loader .zl-social-pill.youtube {
+    background: #FF0000;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+    border-color: rgba(255, 0, 0, 0.3);
+}
+
+/* Hover effects for extra interactivity (even if visual only) */
+#zoundz-loader .zl-social-pill:hover {
+    transform: translate3d(0, -2px, 0) scale(1.05) !important;
+    /* Override explicit transforms if needed */
+    filter: brightness(1.2);
+    z-index: 10;
+}
+
+/* --- Show Icons Phase --- */
+#zoundz-loader.zl-phase-socials .zl-social-pill {
+    opacity: 1 !important;
+    transform: translate3d(0, 0, 0) !important;
+    pointer-events: auto;
+    /* Enable interaction only when visible */
+}
+
+/* Staggered Delay for Drop-in */
+#zoundz-loader.zl-phase-socials .zl-social-pill:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+#zoundz-loader.zl-phase-socials .zl-social-pill:nth-child(2) {
+    transition-delay: 0.2s;
+}
+
+#zoundz-loader.zl-phase-socials .zl-social-pill:nth-child(3) {
+    transition-delay: 0.3s;
+}
+
+#zoundz-loader.zl-phase-socials .zl-social-pill:nth-child(4) {
+    transition-delay: 0.4s;
+}
+
+#zoundz-loader.zl-phase-socials .zl-social-pill:nth-child(5) {
+    transition-delay: 0.5s;
+}
+
+#zoundz-loader.zl-phase-socials .zl-social-pill:nth-child(6) {
+    transition-delay: 0.6s;
+}
+
+#zoundz-loader.zl-phase-socials .zl-social-pill:nth-child(7) {
+    transition-delay: 0.7s;
+}
+
+/* --- Exit Animation: Fade out Right to Left --- */
+#zoundz-loader.zl-phase-icons-exit .zl-social-pill {
+    opacity: 0 !important;
+    transform: translate3d(-30px, 0, 0) !important;
+    /* Move Left */
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    pointer-events: none;
+}
+
+/* Staggered Delay for Exit (Right to Left) */
+#zoundz-loader.zl-phase-icons-exit .zl-social-pill:nth-child(7) {
+    transition-delay: 0.0s;
+}
+
+#zoundz-loader.zl-phase-icons-exit .zl-social-pill:nth-child(6) {
+    transition-delay: 0.1s;
+}
+
+#zoundz-loader.zl-phase-icons-exit .zl-social-pill:nth-child(5) {
+    transition-delay: 0.2s;
+}
+
+#zoundz-loader.zl-phase-icons-exit .zl-social-pill:nth-child(4) {
+    transition-delay: 0.3s;
+}
+
+#zoundz-loader.zl-phase-icons-exit .zl-social-pill:nth-child(3) {
+    transition-delay: 0.4s;
+}
+
+#zoundz-loader.zl-phase-icons-exit .zl-social-pill:nth-child(2) {
+    transition-delay: 0.5s;
+}
+
+#zoundz-loader.zl-phase-icons-exit .zl-social-pill:nth-child(1) {
+    transition-delay: 0.6s;
+}
+
+/* Mobile Performance Optimizations */
+@media (max-width: 768px) {
+    #zoundz-loader .zl-social-pill {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: rgba(40, 40, 40, 0.9);
+        /* Solid fallback */
+        box-shadow: none !important;
+        /* Disable expensive shadow on mobile */
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+}
