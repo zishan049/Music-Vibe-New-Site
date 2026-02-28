@@ -1,0 +1,56 @@
+/* ==========================================================
+   ARTIST PAGE THEMES — Music Vibe
+   Emotions in Motion.
+   ========================================================== */
+
+/* ── MusicVibe — Purple / Blue (Emotional EDM) ────────── */
+.theme-musicvibe {
+    --accent: #8b5cf6; /* Violet */
+    --accent-secondary: #3b82f6; /* Blue */
+    --accent-glow: rgba(139, 92, 246, 0.4);
+    --accent-gradient: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    --bg-tint: #0f172a; /* Slate 900 */
+}
+
+/* Gradient overlay removed — underglow only */
+
+.theme-musicvibe .artist-hero-image {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.4),
+        0 0 60px rgba(139, 92, 246, 0.25),
+        0 0 120px rgba(59, 130, 246, 0.15),
+        0 0 200px rgba(59, 130, 246, 0.08);
+}
+
+.theme-musicvibe .artist-hero h1 {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent; /* Fallback */
+}
+
+.theme-musicvibe .social-link:hover {
+    border-color: var(--accent);
+    background: rgba(139, 92, 246, 0.15);
+    color: var(--accent);
+}
+
+.theme-musicvibe .back-home {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.theme-musicvibe .back-home:hover {
+    background: var(--accent-gradient);
+    border-color: transparent;
+    color: #fff;
+}
+
+.theme-musicvibe .artist-bio h2 {
+    color: var(--accent-secondary);
+}
+
+/* ── Theme transition animation ───────────────────────── */
+.artist-page[class*="theme-"] .artist-hero-image {
+    transition: border-color 0.5s ease, box-shadow 0.5s ease;
+}

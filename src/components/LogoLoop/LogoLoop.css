@@ -1,0 +1,79 @@
+/* ── Logo Loop / Scrolling Social Icons Marquee ────────── */
+.logo-loop-section {
+    padding: 40px 0;
+    text-align: center;
+    overflow: hidden;
+}
+
+.logo-loop-section .section-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+}
+
+.logo-loop-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.logo-loop-track {
+    display: flex;
+    gap: 40px;
+    width: max-content;
+    animation: logoScroll 30s linear infinite;
+}
+
+.logo-loop-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.logo-loop-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.logo-loop-label {
+    pointer-events: none;
+}
+
+@keyframes logoScroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(var(--scroll-distance, -50%));
+    }
+}
+
+@media (max-width: 768px) {
+    .logo-loop-track {
+        gap: 24px;
+        animation-duration: 20s;
+    }
+
+    .logo-loop-item {
+        padding: 8px 14px;
+        font-size: 0.8rem;
+        gap: 6px;
+    }
+}

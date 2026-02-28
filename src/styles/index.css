@@ -1,0 +1,525 @@
+/* ═══════════════════════════════════════════════════════
+   Global Styles — Music Vibe React
+   Ported from styles.css, themes.css, and animations.css
+   ═══════════════════════════════════════════════════════ */
+
+/* ── CSS Variables ─────────────────────────────────────── */
+:root {
+  --bg: #000000;
+  --surface: #111111;
+  --surface-hover: #1a1a1a;
+  --card: rgba(255, 255, 255, 0.04);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --text: #f5f5f5;
+  --text-secondary: #a0a0a0;
+  --muted: #666;
+  --accent: #8b5cf6;
+  --accent-glow: rgba(139, 92, 246, 0.4);
+  --gradient-start: #8b5cf6;
+  --gradient-end: #06b6d4;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Reset & Base ──────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: calc(var(--vh, 1vh) * 100);
+}
+
+/* ── z-index Layering ──────────────────────────────────── */
+#app,
+main {
+  position: relative;
+  z-index: 1;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ── Typography ────────────────────────────────────────── */
+h1 {
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+h1 span,
+.embed-gradient-text {
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+h2 {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.tagline {
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  color: var(--text-secondary);
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  margin-top: 8px;
+}
+
+/* ── Layout ────────────────────────────────────────────── */
+.content-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 24px;
+}
+
+header {
+  text-align: center;
+  padding: 80px 0 40px;
+}
+
+footer {
+  text-align: center;
+  padding: 40px 24px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ── Logo ──────────────────────────────────────────────── */
+.logo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  object-fit: cover;
+  margin: 0 auto 24px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Glow Bar ──────────────────────────────────────────── */
+.glow-bar {
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+  border-radius: 2px;
+  margin: 20px auto;
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+/* ── CTA Button ────────────────────────────────────────── */
+.cta-container {
+  margin-top: 30px;
+}
+
+.cta {
+  display: inline-block;
+  padding: 14px 48px;
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 2px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all var(--transition);
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+.cta:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 30px var(--accent-glow);
+}
+
+/* ── Divider ───────────────────────────────────────────── */
+.divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  margin: 40px 0;
+}
+
+/* ── Grid (Feature Cards) ──────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 0 24px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 32px 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition), border-color var(--transition);
+  backdrop-filter: blur(10px);
+}
+
+.card:hover {
+  border-color: rgba(139, 92, 246, 0.2);
+}
+
+.card h3 {
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.card p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* ── Social Links ──────────────────────────────────────── */
+.artist-social-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all var(--transition);
+}
+
+.social-link:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text);
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.social-link.spotify:hover {
+  color: #1DB954;
+  border-color: rgba(29, 185, 84, 0.4);
+}
+
+.social-link.instagram:hover {
+  color: #E1306C;
+  border-color: rgba(225, 48, 108, 0.4);
+}
+
+.social-link.apple:hover {
+  color: #FA243C;
+  border-color: rgba(250, 36, 60, 0.4);
+}
+
+.social-link.youtube:hover {
+  color: #FF0000;
+  border-color: rgba(255, 0, 0, 0.4);
+}
+
+.social-link.soundcloud:hover {
+  color: #FF5500;
+  border-color: rgba(255, 85, 0, 0.4);
+}
+
+.social-link.amazon:hover {
+  color: #00A8E1;
+  border-color: rgba(0, 168, 225, 0.4);
+}
+
+/* ── Stream Section ────────────────────────────────────── */
+.stream-section-title {
+  text-align: center;
+  margin: 40px 0 24px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* ── About Page Cards ──────────────────────────────────── */
+.artists-listing-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  padding-bottom: 120px;
+}
+
+.artists-page-hero,
+.art-page-hero {
+  text-align: center;
+  padding: 100px 0 40px;
+}
+
+/* Semi-transparent hero card — matching original */
+.hero-card {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 60px;
+  background: rgba(20, 20, 20, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.about-content-section {
+  padding: 20px 0 60px;
+}
+
+.about-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.about-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 40px 28px;
+  backdrop-filter: blur(10px);
+  transition: border-color var(--transition), transform var(--transition);
+}
+
+.about-card:hover {
+  border-color: rgba(139, 92, 246, 0.2);
+  transform: translateY(-4px);
+}
+
+.about-card-icon {
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.about-card h2 {
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+}
+
+.about-card p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* ── About Social Section ──────────────────────────────── */
+.about-social-section {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.gradient-title {
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.artists-cta-section {
+  text-align: center;
+  padding: 60px 0;
+}
+
+.artists-cta-section p {
+  color: var(--text-secondary);
+  margin-bottom: 30px;
+}
+
+/* ── Embed Grid ────────────────────────────────────────── */
+.embed-grid {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  gap: 32px;
+}
+
+.embed-bottom-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.embed-card {
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius);
+  padding: 16px;
+  overflow: hidden;
+  transition: border-color var(--transition);
+}
+
+.embed-card:hover {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.embed-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+}
+
+.embed-label--spotify {
+  color: #1DB954;
+}
+
+.embed-label--amazon {
+  color: #00A8E1;
+}
+
+.embed-label--soundcloud {
+  color: #FF5500;
+}
+
+.embed-label--apple {
+  color: #FA2D48;
+}
+
+.embed-card iframe {
+  width: 100%;
+  border: none;
+  border-radius: var(--radius-sm);
+}
+
+.spotify-iframe {
+  height: 352px;
+}
+
+.amazon-embed-wrapper iframe {
+  width: 100%;
+  height: 352px;
+  border: none;
+  border-radius: var(--radius-sm);
+}
+
+.embed-logo {
+  width: 22px;
+  height: 22px;
+}
+
+/* ── Animations ────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .content-section {
+    padding: 40px 16px;
+  }
+
+  header {
+    padding: 60px 0 30px;
+  }
+
+  .logo {
+    width: 90px;
+    height: 90px;
+  }
+
+  .embed-bottom-row {
+    grid-template-columns: 1fr;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    padding: 0 16px;
+  }
+
+  .cta {
+    padding: 12px 36px;
+    font-size: 0.85rem;
+  }
+
+  .artists-listing-page {
+    padding-bottom: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  .artists-page-hero,
+  .art-page-hero {
+    padding: 80px 0 30px;
+  }
+}

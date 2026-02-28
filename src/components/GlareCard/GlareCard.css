@@ -1,0 +1,26 @@
+.glare-card {
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+.glare-card .glare-wrapper {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    border-radius: inherit;
+}
+
+.glare-card .glare {
+    position: absolute;
+    width: var(--glare-size, 300px);
+    height: var(--glare-size, 300px);
+    border-radius: 50%;
+    background: radial-gradient(circle closest-side, rgba(255, 255, 255, 0.3), transparent);
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.4s ease;
+}

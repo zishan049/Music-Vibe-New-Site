@@ -1,0 +1,74 @@
+[
+    {
+        "title": "Dark",
+        "artwork": "Dark.jpg",
+        "link": "https://ffm.to/-dark",
+        "year": "2025",
+        "type": "Single",
+        "status": "Released",
+        "accentColor": {
+            "hue": 0,
+            "sat": 80
+        }
+    },
+    {
+        "title": "Rainy Chords",
+        "artwork": "RainyChords.jpg",
+        "link": "https://ffm.to/rainychords",
+        "year": "2025",
+        "type": "Single",
+        "status": "Released",
+        "accentColor": {
+            "hue": 35,
+            "sat": 90
+        }
+    },
+    {
+        "title": "Resurrection",
+        "artwork": "Resurrection.png",
+        "link": "https://ffm.to/wx0yao",
+        "year": "2025",
+        "type": "Single",
+        "status": "Released",
+        "accentColor": {
+            "hue": 210,
+            "sat": 100
+        }
+    },
+    {
+        "title": "K",
+        "artwork": "k.jpg",
+        "link": "https://ffm.to/-K",
+        "year": "2026",
+        "type": "Single",
+        "status": "Released",
+        "accentColor": {
+            "hue": 340,
+            "sat": 85
+        }
+    },
+    {
+        "title": "Stareya",
+        "artwork": "Stareya.png",
+        "link": "",
+        "year": "2026",
+        "type": "EP",
+        "status": "Upcoming",
+        "accentColor": {
+            "hue": 200,
+            "sat": 60
+        }
+    },
+    {
+        "title": "With U",
+        "artwork": "With U.png",
+        "link": "",
+        "year": "2026",
+        "type": "Single",
+        "status": "Upcoming",
+        "accentColor": {
+            "hue": 300,
+            "sat": 80
+        }
+    }
+]

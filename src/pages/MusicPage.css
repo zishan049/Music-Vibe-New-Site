@@ -1,0 +1,228 @@
+/* ── Art Gallery ───────────────────────────────────────── */
+.art-gallery-section {
+    padding: 20px 0 60px;
+}
+
+.art-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 32px;
+}
+
+/* ── Art Card ──────────────────────────────────────────── */
+.art-card {
+    position: relative;
+    border-radius: 14px;
+    overflow: visible;
+    /* allow glow to show outside */
+    aspect-ratio: 1 / 1;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+}
+
+/* Rotating glow border — uses a conic gradient pseudo-element */
+.art-card::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 16px;
+    padding: 3px;
+    background: conic-gradient(from var(--glow-angle, 0deg),
+            transparent 0%,
+            var(--glow-color, rgba(139, 92, 246, 0.6)) 25%,
+            transparent 50%,
+            var(--glow-color, rgba(139, 92, 246, 0.6)) 75%,
+            transparent 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    animation: none;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.art-card:hover::before {
+    opacity: 1;
+    animation: glowRotate 2s linear infinite;
+}
+
+@keyframes glowRotate {
+    from {
+        --glow-angle: 0deg;
+    }
+
+    to {
+        --glow-angle: 360deg;
+    }
+}
+
+/* Register the custom property for animation */
+@property --glow-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+/* Inner content wrapper to clip the image */
+.art-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 14px;
+    overflow: hidden;
+    z-index: 2;
+}
+
+.art-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.art-card:hover .art-card-image {
+    transform: scale(1.05);
+}
+
+/* Hide placeholder when image loads */
+.art-card-placeholder {
+    display: none;
+}
+
+/* ── Hover Overlay ─────────────────────────────────────── */
+.art-card-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 16px;
+    background: linear-gradient(to top,
+            rgba(0, 0, 0, 0.85) 0%,
+            rgba(0, 0, 0, 0.3) 50%,
+            transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 3;
+}
+
+.art-card:hover .art-card-overlay {
+    opacity: 1;
+}
+
+.art-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+}
+
+.art-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.art-card-type {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.15);
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.art-card-year {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.art-card-upcoming {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #06b6d4;
+    background: rgba(6, 182, 212, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+    animation: upcomingPulse 2s ease-in-out infinite;
+}
+
+@keyframes upcomingPulse {
+
+    0%,
+    100% {
+        background: rgba(6, 182, 212, 0.15);
+        box-shadow: 0 0 4px rgba(6, 182, 212, 0.2);
+        color: #06b6d4;
+    }
+
+    50% {
+        background: rgba(6, 182, 212, 0.35);
+        box-shadow: 0 0 12px rgba(6, 182, 212, 0.5), 0 0 24px rgba(6, 182, 212, 0.2);
+        color: #22d3ee;
+    }
+}
+
+.art-card-external {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateY(-4px);
+    z-index: 4;
+}
+
+.art-card:hover .art-card-external {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.art-card-external svg {
+    width: 14px;
+    height: 14px;
+    fill: rgba(255, 255, 255, 0.8);
+}
+
+/* ── Glow shadow on hover ──────────────────────────────── */
+.art-card:hover {
+    filter: drop-shadow(0 0 20px var(--glow-color, rgba(139, 92, 246, 0.3)));
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .art-gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 14px;
+        padding: 0 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .art-gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+}

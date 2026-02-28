@@ -1,0 +1,312 @@
+/* ═══════════════════════════════════════════════════════
+   CINEMATIC 2-PHASE LOADING SCREEN
+   Phase 1: Social pills  →  Phase 2: Logo + Title
+   ═══════════════════════════════════════════════════════ */
+
+.zl-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.zl-phase-fullExit {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════════════
+   PHASE 1 — Social Pills
+   ═════════════════════════════════════════════════════ */
+.zl-p1 {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s ease;
+}
+
+.zl-p1-hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.zl-socials {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    perspective: 1000px;
+    z-index: 100001;
+    position: relative;
+    width: 100%;
+    max-width: 700px;
+    padding: 0 20px;
+}
+
+/* ── Social Pill ───────────────────────────────────── */
+.zl-social-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    cursor: default;
+
+    /* Initial: hidden, pushed down */
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    will-change: transform, opacity;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.zl-social-pill svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor !important;
+    z-index: 2;
+    position: relative;
+    display: block;
+    flex-shrink: 0;
+}
+
+.pill-text {
+    color: #ffffff !important;
+    z-index: 2;
+    position: relative;
+}
+
+/* ── Show Icons Phase ──────────────────────────────── */
+.zl-phase-socials .zl-social-pill {
+    opacity: 1 !important;
+    transform: translate3d(0, 0, 0) !important;
+    pointer-events: auto;
+}
+
+/* Staggered entrance */
+.zl-phase-socials .zl-social-pill:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+.zl-phase-socials .zl-social-pill:nth-child(2) {
+    transition-delay: 0.2s;
+}
+
+.zl-phase-socials .zl-social-pill:nth-child(3) {
+    transition-delay: 0.3s;
+}
+
+.zl-phase-socials .zl-social-pill:nth-child(4) {
+    transition-delay: 0.4s;
+}
+
+.zl-phase-socials .zl-social-pill:nth-child(5) {
+    transition-delay: 0.5s;
+}
+
+.zl-phase-socials .zl-social-pill:nth-child(6) {
+    transition-delay: 0.6s;
+}
+
+.zl-phase-socials .zl-social-pill:nth-child(7) {
+    transition-delay: 0.7s;
+}
+
+/* ── Exit Animation (Right to Left sweep) ──────────── */
+.zl-phase-icons-exit .zl-social-pill {
+    opacity: 0 !important;
+    transform: translate3d(-30px, 0, 0) !important;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    pointer-events: none;
+}
+
+/* Staggered exit (reverse order) */
+.zl-phase-icons-exit .zl-social-pill:nth-child(7) {
+    transition-delay: 0.0s;
+}
+
+.zl-phase-icons-exit .zl-social-pill:nth-child(6) {
+    transition-delay: 0.08s;
+}
+
+.zl-phase-icons-exit .zl-social-pill:nth-child(5) {
+    transition-delay: 0.16s;
+}
+
+.zl-phase-icons-exit .zl-social-pill:nth-child(4) {
+    transition-delay: 0.24s;
+}
+
+.zl-phase-icons-exit .zl-social-pill:nth-child(3) {
+    transition-delay: 0.32s;
+}
+
+.zl-phase-icons-exit .zl-social-pill:nth-child(2) {
+    transition-delay: 0.40s;
+}
+
+.zl-phase-icons-exit .zl-social-pill:nth-child(1) {
+    transition-delay: 0.48s;
+}
+
+/* ══════════════════════════════════════════════════════
+   PHASE 2 — Logo + Title
+   Starts centered-ish, slides UP to exact homepage pos
+   ═══════════════════════════════════════════════════════
+   Homepage logo top = 60px (content-section) + 80px (header) = 140px
+   We position content at top:140px as the FINAL position,
+   and initially offset it downward to appear centered.
+   ═════════════════════════════════════════════════════ */
+.zl-p2 {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    overflow: hidden;
+}
+
+.zl-p2-active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ── Content positioned at exact homepage header location ── */
+.zl-p2-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0;
+    width: 100%;
+    position: absolute;
+    /* Final position: exactly matches homepage header (60px section + 80px header) */
+    top: 140px;
+    /* Initial state: pushed down so it appears ~centered on screen */
+    transform: translateY(calc(50vh - 280px));
+    opacity: 1;
+    transition:
+        transform 1.4s cubic-bezier(0.25, 1, 0.5, 1),
+        opacity 1.2s ease;
+    will-change: transform, opacity;
+}
+
+/* Reposition: remove the offset → content slides up to top:140px (homepage exact) */
+.zl-p2-repositioned .zl-p2-content {
+    transform: translateY(0);
+}
+
+/* Exit: stay at homepage position, fade out */
+.zl-p2-exit .zl-p2-content {
+    transform: translateY(0);
+    opacity: 0;
+}
+
+
+
+
+/* ── Logo — matches homepage .logo (120x120) ─────── */
+.zl-p2-logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    object-fit: cover;
+    margin: 0 auto 24px;
+    /* matches homepage .logo margin */
+    opacity: 0;
+    transform: scale(0.6);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    transition:
+        opacity 0.8s ease,
+        transform 1.2s cubic-bezier(0.23, 1, 0.32, 1),
+        box-shadow 1s ease;
+}
+
+.zl-p2-logo-show {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+    animation: logoPulse 2s infinite alternate;
+}
+
+@keyframes logoPulse {
+    from {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+
+    to {
+        box-shadow: 0 0 50px rgba(255, 255, 255, 0.6);
+    }
+}
+
+/* ── Title + Tagline ──────────────────────────────── */
+.zl-p2-text {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1s ease, transform 1s ease;
+}
+
+.zl-p2-text-show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.zl-p2-title {
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    /* matches homepage h1 */
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    /* matches homepage h1 */
+    line-height: 1.1;
+    color: #f5f5f5;
+    margin: 0;
+}
+
+.zl-p2-title span {
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.zl-p2-tagline {
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    /* matches homepage .tagline */
+    color: #a0a0a0;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    margin-top: 8px;
+}
+
+/* ── Mobile ────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .zl-social-pill {
+        padding: 8px 14px;
+        font-size: 0.8rem;
+    }
+
+    .zl-p2-logo {
+        width: 90px;
+        /* matches homepage mobile .logo */
+        height: 90px;
+    }
+}

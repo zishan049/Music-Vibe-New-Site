@@ -1,0 +1,32 @@
+/* Particle Canvas — ported from Baground.css */
+#particle-canvas,
+.particle-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    width: 100vw;
+    height: calc(var(--vh, 1vh) * 100);
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1),
+        filter 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: blur(0px);
+}
+
+/* Cinematic breathing glow */
+@keyframes canvasBreathe {
+
+    0%,
+    100% {
+        filter: brightness(1) blur(0px);
+    }
+
+    50% {
+        filter: brightness(1.08) blur(0.3px);
+    }
+}
+
+#particle-canvas.particles-active,
+.particle-canvas.particles-active {
+    animation: canvasBreathe 8s ease-in-out infinite;
+}
