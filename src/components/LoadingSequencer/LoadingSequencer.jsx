@@ -16,8 +16,7 @@ import './LoadingSequencer.css'
 const PRELOAD_IMAGES = [
     ...tracks.map(t => `/Assets/Artwork/${t.artwork}`),
     '/Assets/Friends/Cyu.png',
-    '/Assets/Friends/CyuBackground.png',
-    '/Assets/Friends/PrinceAlex.png'
+    '/Assets/Friends/CyuBackground.png'
 ]
 
 const SOCIAL_PILLS = [
