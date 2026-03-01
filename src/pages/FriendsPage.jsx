@@ -13,18 +13,18 @@ const FRIENDS = [
         handle: 'Cyuuneia',
         title: 'Vocalist',
         status: 'Singing',
-        avatarUrl: './public/Assets/Friends/Cyu.png',
+        avatarUrl: '/Assets/Friends/Cyu.png',
         siteUrl: 'https://cyuuneia.com/',
-        image: './public/Assets/Friends/CyuBackground.png',
+        image: '/Assets/Friends/CyuBackground.png',
     },
     {
         name: 'Prince Alex',
         handle: 'Prince Alex',
         title: 'Singer & Songwriter',
         status: 'Creating vibes',
-        avatarUrl: './public/Assets/Friends/PrinceAlex.png',
+        avatarUrl: '/Assets/Friends/PrinceAlex.png',
         siteUrl: 'https://prince-alex.com/',
-        image: './public/Assets/Friends/PrinceAlex.png',
+        image: '/Assets/Friends/PrinceAlex.png',
     },
 ]
 

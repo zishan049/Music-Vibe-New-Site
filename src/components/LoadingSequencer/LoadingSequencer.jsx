@@ -12,8 +12,13 @@ import './LoadingSequencer.css'
  *          Only exits after preload is confirmed complete
  */
 
-// Only preload artwork images from /Assets/Artwork/
-const PRELOAD_IMAGES = tracks.map(t => `/Assets/Artwork/${t.artwork}`)
+// Preload artwork images and important new friend assets
+const PRELOAD_IMAGES = [
+    ...tracks.map(t => `/Assets/Artwork/${t.artwork}`),
+    '/Assets/Friends/Cyu.png',
+    '/Assets/Friends/CyuBackground.png',
+    '/Assets/Friends/PrinceAlex.png'
+]
 
 const SOCIAL_PILLS = [
     { key: 'instagram', color: '#E1306C', shadow: 'rgba(225, 48, 108, 0.4)' },
