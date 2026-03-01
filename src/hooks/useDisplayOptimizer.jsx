@@ -192,10 +192,7 @@ export default function useDisplayOptimizer() {
         // NOTE: Don't override transform on elements that use it for positioning (e.g. dock)
         requestAnimationFrame(() => {
             const gpuElements = document.querySelectorAll(
-                '.zl-overlay, .zl-p1, .zl-p2, #particle-canvas, .particle-canvas, ' +
-                '.marquee, .marquee__inner, .marquee__bg, ' +
-                '.pc-card-shell, .pc-shine, .pc-glare, .pc-status-badge, ' +
-                '.menu__item-bg'
+                '.zl-overlay, .zl-p1, .zl-p2, #particle-canvas, .particle-canvas, .art-card, .marquee__inner, .pc-card, .logo-loop-track'
             );
             gpuElements.forEach(el => {
                 el.style.willChange = 'transform, opacity';
