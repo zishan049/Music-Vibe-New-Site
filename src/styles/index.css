@@ -64,6 +64,14 @@ img {
   display: block;
 }
 
+/* ── Image Protection (prevent Save-As) ────────────────── */
+img:not(.no-protect) {
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
 /* ── Typography ────────────────────────────────────────── */
 h1 {
   font-size: clamp(2.2rem, 5vw, 3.8rem);

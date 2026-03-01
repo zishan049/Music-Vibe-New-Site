@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import tracks from '../data/tracks.json'
 import LogoLoop from '../components/LogoLoop/LogoLoop'
 import Footer from '../components/Footer/Footer'
@@ -7,6 +7,21 @@ import GlitchText from '../components/GlitchText/GlitchText'
 import './MusicPage.css'
 
 export default function MusicPage() {
+    // Completely disable right-click, drag, text selection, and middle-click on this page
+    useEffect(() => {
+        const block = (e) => e.preventDefault();
+        const blockMouse = (e) => { if (e.button === 1 || e.button === 2) e.preventDefault(); };
+        document.addEventListener('contextmenu', block);
+        document.addEventListener('dragstart', block);
+        document.addEventListener('selectstart', block);
+        document.addEventListener('mousedown', blockMouse);
+        return () => {
+            document.removeEventListener('contextmenu', block);
+            document.removeEventListener('dragstart', block);
+            document.removeEventListener('selectstart', block);
+            document.removeEventListener('mousedown', blockMouse);
+        };
+    }, []);
     const [, setHoveredColor] = useState(null)
 
     return (
