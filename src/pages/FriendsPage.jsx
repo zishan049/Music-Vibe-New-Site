@@ -21,10 +21,10 @@ const FRIENDS = [
         name: 'Prince Alex',
         handle: 'Prince Alex',
         title: 'Singer & Songwriter',
-        status: 'Creating vibes',
-        avatarUrl: '',
+        status: 'Writing',
+        avatarUrl: '/Assets/Friends/Alex.png',
         siteUrl: 'https://prince-alex.com/',
-        image: '',
+        image: '/Assets/Friends/AlexBackgrounnd.png',
     },
 ]
 
