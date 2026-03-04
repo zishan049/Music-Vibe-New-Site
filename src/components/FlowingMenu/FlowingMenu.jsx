@@ -33,7 +33,7 @@ function FlowingMenu({
     );
 }
 
-function MenuItem({ index, link, text, image, speed, textColor, marqueeBgColor, marqueeTextColor, borderColor, onItemClick }) {
+function MenuItem({ index, link, text, image, bgSize, speed, textColor, marqueeBgColor, marqueeTextColor, borderColor, onItemClick }) {
     const itemRef = useRef(null);
     const marqueeRef = useRef(null);
     const marqueeInnerRef = useRef(null);
@@ -141,11 +141,11 @@ function MenuItem({ index, link, text, image, speed, textColor, marqueeBgColor, 
                 onMouseLeave={handleMouseLeave}
                 style={{ color: textColor, cursor: 'pointer' }}
             >
-                {image && <div className="menu__item-bg" style={{ backgroundImage: `url(${image})` }} />}
+                {image && <div className="menu__item-bg" style={{ backgroundImage: `url(${image})`, ...(bgSize && { backgroundSize: bgSize }) }} />}
                 <span className="menu__item-text">{text}</span>
             </a>
             <div className="marquee" ref={marqueeRef}>
-                {image && <div className="marquee__bg" style={{ backgroundImage: `url(${image})` }} />}
+                {image && <div className="marquee__bg" style={{ backgroundImage: `url(${image})`, ...(bgSize && { backgroundSize: bgSize }) }} />}
                 <div className="marquee__inner-wrap">
                     <div className="marquee__inner" ref={marqueeInnerRef} aria-hidden="true">
                         {[...Array(repetitions)].map((_, idx) => (

@@ -33,12 +33,12 @@
 .friends-menu-entry .menu__item-link {
     font-size: clamp(1rem, 2.5vw, 1.6rem);
     padding: 0.8em 0.5em;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Montserrat', 'Noto Sans', sans-serif;
 }
 
 .friends-menu-entry .marquee__part {
     font-size: clamp(1rem, 2.5vw, 1.6rem);
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Montserrat', 'Noto Sans', sans-serif;
 }
 
 /* ── Dropdown ────────────────────────── */

@@ -26,6 +26,16 @@ const FRIENDS = [
         siteUrl: 'https://prince-alex.com/',
         image: '/Assets/Friends/AlexBackgrounnd.png',
     },
+    {
+        name: 'Ɍ4Vè ✗',
+        handle: 'Ɍ4Vè ✗',
+        title: 'Slap House Guy',
+        status: 'Producing',
+        avatarUrl: '/Assets/Friends/Ɍ4Vè ✗.png',
+        siteUrl: 'https://zoundznation.onrender.com/',
+        image: '/Assets/Friends/Ɍ4VèBackground.png',
+        bgSize: '50%',
+    },
 ]
 
 export default function FriendsPage() {
@@ -103,6 +113,7 @@ export default function FriendsPage() {
                                     items={[{
                                         text: friend.name,
                                         image: friend.image,
+                                        bgSize: friend.bgSize,
                                         link: '#',
                                     }]}
                                     onItemClick={() => handleItemClick(idx)}
