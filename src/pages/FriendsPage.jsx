@@ -36,6 +36,22 @@ const FRIENDS = [
         image: '/Assets/Friends/Ɍ4VèBackground.png',
         bgSize: '50%',
     },
+    {
+        name: 'Potassium',
+        handle: 'Potassium',
+        title: 'Vocalist',
+        status: 'Singing',
+        avatarUrl: '/Assets/Friends/Potassium.png',
+        image: '/Assets/Friends/PotassiumBackground.png',
+    },
+    {
+        name: 'Toothless',
+        handle: 'Toothless',
+        title: 'Vocalist',
+        status: 'Singing',
+        avatarUrl: '/Assets/Friends/Toothless.png',
+        image: '/Assets/Friends/ToothlessBackground.png',
+    },
 ]
 
 export default function FriendsPage() {
