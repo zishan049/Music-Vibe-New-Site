@@ -50,10 +50,10 @@
     {
         "title": "Stareya",
         "artwork": "Stareya.png",
-        "link": "",
+        "link": "https://ffm.to/epstareya",
         "year": "2026",
         "type": "EP",
-        "status": "Upcoming",
+        "status": "Released",
         "accentColor": {
             "hue": 200,
             "sat": 60
