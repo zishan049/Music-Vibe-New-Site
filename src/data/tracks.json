@@ -50,10 +50,10 @@
     {
         "title": "Stareya",
         "artwork": "Stareya.png",
-        "link": "",
+        "link": "https://ffm.to/epstareya",
         "year": "2026",
         "type": "EP",
-        "status": "Upcoming",
+        "status": "Released",
         "accentColor": {
             "hue": 200,
             "sat": 60
@@ -62,10 +62,10 @@
     {
         "title": "With U",
         "artwork": "With U.png",
-        "link": "",
+        "link": "https://ffm.to/wu",
         "year": "2026",
         "type": "Single",
-        "status": "Upcoming",
+        "status": "Released",
         "accentColor": {
             "hue": 300,
             "sat": 80
