@@ -14,8 +14,8 @@
     --rotate-y: 0deg;
     --icon: none;
     --grain: none;
-    --inner-gradient: linear-gradient(145deg, #60496e8c 0%, #71C4FF44 100%);
-    --behind-glow-color: rgba(139, 92, 246, 0.5);
+    --inner-gradient: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(200, 200, 200, 0.05) 100%);
+    --behind-glow-color: rgba(255, 255, 255, 0.2);
     --behind-glow-size: 50%;
 
     position: relative;
@@ -176,10 +176,11 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #06b6d4;
-    background: rgba(6, 182, 212, 0.15);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
     padding: 3px 10px;
     border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     animation: statusPulse 2s ease-in-out infinite;
 }
 
@@ -187,15 +188,15 @@
 
     0%,
     100% {
-        background: rgba(6, 182, 212, 0.15);
-        box-shadow: 0 0 4px rgba(6, 182, 212, 0.2);
-        color: #06b6d4;
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
+        color: #ffffff;
     }
 
     50% {
-        background: rgba(6, 182, 212, 0.35);
-        box-shadow: 0 0 12px rgba(6, 182, 212, 0.5), 0 0 24px rgba(6, 182, 212, 0.2);
-        color: #22d3ee;
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 0 12px rgba(255, 255, 255, 0.4), 0 0 24px rgba(255, 255, 255, 0.1);
+        color: #ffffff;
     }
 }
 
@@ -245,7 +246,7 @@
     padding: 6px 16px;
     border-radius: 50px;
     border: 1px solid rgba(255, 255, 255, 0.15);
-    background: rgba(139, 92, 246, 0.3);
+    background: rgba(255, 255, 255, 0.1);
     color: #fff;
     font-size: 0.75rem;
     font-weight: 600;
@@ -262,10 +263,10 @@
 }
 
 .pc-contact-btn:hover {
-    background: rgba(139, 92, 246, 0.55);
-    border-color: rgba(139, 92, 246, 0.6);
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.35);
+    box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
 }
 
 /* ── Responsive ──────────────────────── */

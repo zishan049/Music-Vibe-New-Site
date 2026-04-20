@@ -13,11 +13,12 @@
   --text: #f5f5f5;
   --text-secondary: #a0a0a0;
   --muted: #666;
-  --accent: #8b5cf6;
-  --accent-glow: rgba(139, 92, 246, 0.4);
-  --gradient-start: #8b5cf6;
-  --gradient-end: #06b6d4;
-  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --accent: #ffffff;
+  --accent-glow: rgba(255, 255, 255, 0.2);
+  --gradient-start: #ffffff;
+  --gradient-end: #a0a0a0;
+  --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Syne', sans-serif;
   --radius: 16px;
   --radius-sm: 10px;
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -74,29 +75,36 @@ img:not(.no-protect) {
 
 /* ── Typography ────────────────────────────────────────── */
 h1 {
+  font-family: var(--font-display);
   font-size: clamp(2.2rem, 5vw, 3.8rem);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.04em;
   line-height: 1.1;
+  text-transform: uppercase;
 }
 
 h1 span,
 .embed-gradient-text {
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text);
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: initial;
 }
 
 h2 {
+  font-family: var(--font-display);
   font-size: clamp(1.4rem, 3vw, 2rem);
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 16px;
+  letter-spacing: -0.02em;
 }
 
 h3 {
+  font-family: var(--font-display);
   font-size: 1.1rem;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .tagline {
@@ -142,10 +150,10 @@ footer {
 .glow-bar {
   width: 80px;
   height: 4px;
-  background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+  background: var(--text);
   border-radius: 2px;
   margin: 20px auto;
-  box-shadow: 0 0 20px var(--accent-glow);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
 }
 
 /* ── CTA Button ────────────────────────────────────────── */
@@ -156,17 +164,17 @@ footer {
 .cta {
   display: inline-block;
   padding: 14px 48px;
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-  color: white;
+  background: #ffffff;
+  color: #000000;
   font-weight: 700;
   font-size: 0.95rem;
   letter-spacing: 2px;
   border-radius: 50px;
-  border: none;
+  border: 1px solid #ffffff;
   cursor: pointer;
   text-transform: uppercase;
   transition: all var(--transition);
-  box-shadow: 0 4px 20px var(--accent-glow);
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
 }
 
 .cta:hover {
@@ -205,7 +213,7 @@ footer {
 }
 
 .card:hover {
-  border-color: rgba(139, 92, 246, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .card h3 {
@@ -234,19 +242,22 @@ footer {
   gap: 8px;
   padding: 8px 16px;
   border-radius: 50px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text);
   font-size: 0.85rem;
   font-weight: 500;
+  white-space: nowrap; /* P2: prevent text from wrapping inside pills */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: all var(--transition);
 }
 
 .social-link:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: var(--text);
-  transform: translateY(-1px);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 .social-link.spotify:hover {
@@ -333,7 +344,7 @@ footer {
 }
 
 .about-card:hover {
-  border-color: rgba(139, 92, 246, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-4px);
 }
 
@@ -360,10 +371,11 @@ footer {
 }
 
 .gradient-title {
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #ffffff;
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: initial;
 }
 
 .artists-cta-section {
@@ -518,6 +530,20 @@ footer {
 
   .artists-listing-page {
     padding-bottom: 80px;
+  }
+}
+
+/* ── Narrow Mobile (≤600px): hero-card padding + grid fix ── */
+@media (max-width: 600px) {
+  /* P1-Fix: reduce hero-card horizontal padding to prevent text crushing */
+  .hero-card {
+    padding: 28px 20px;
+  }
+
+  /* P1-Fix: force about-grid-container to single column — prevents
+     overflow at 320-375px where minmax(300px,1fr) exceeds viewport */
+  .about-grid-container {
+    grid-template-columns: 1fr;
   }
 }
 

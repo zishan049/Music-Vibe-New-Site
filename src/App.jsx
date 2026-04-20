@@ -1,13 +1,12 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
-import ParticleCanvas from './components/ParticleCanvas/ParticleCanvas'
 import Dock from './components/Dock/Dock'
+import FloatingLines from './components/FloatingLines/FloatingLines'
 import LoadingSequencer from './components/LoadingSequencer/LoadingSequencer'
 import ClickSpark from './components/ClickSpark/ClickSpark'
 import HomePage from './pages/HomePage'
 import AboutPage from './pages/AboutPage'
 import MusicPage from './pages/MusicPage'
-import EmbedsPage from './pages/EmbedsPage'
 import FriendsPage from './pages/FriendsPage'
 
 function ScrollToTop() {
@@ -24,39 +23,47 @@ export default function App() {
     // Run global display optimizer for responsive scaling and --vh calculations
     useDisplayOptimizer();
 
-    // Protect all images from right-click Save As, drag-to-tab, and middle-click
+    // Disable right-click and protect images from drag/middle-click
     useEffect(() => {
         const blockContextMenu = (e) => {
-            if (e.target.tagName === 'IMG') {
-                e.preventDefault();
-            }
+            e.preventDefault();
         };
-        const blockDrag = (e) => {
+        const blockDragSiteWide = (e) => {
             if (e.target.tagName === 'IMG') {
                 e.preventDefault();
                 return false;
             }
         };
-        const blockMiddleClick = (e) => {
-            if (e.target.tagName === 'IMG' && (e.button === 1 || e.button === 2)) {
-                e.preventDefault();
+        const blockMiddleClickSiteWide = (e) => {
+            // Button 1 is middle click, Button 2 is right click
+            if (e.button === 1 || e.button === 2) {
+                if (e.target.tagName === 'IMG') {
+                    e.preventDefault();
+                }
             }
         };
         document.addEventListener('contextmenu', blockContextMenu);
-        document.addEventListener('dragstart', blockDrag);
-        document.addEventListener('mousedown', blockMiddleClick);
+        document.addEventListener('dragstart', blockDragSiteWide);
+        document.addEventListener('mousedown', blockMiddleClickSiteWide);
         document.addEventListener('drop', (e) => e.preventDefault());
         return () => {
             document.removeEventListener('contextmenu', blockContextMenu);
-            document.removeEventListener('dragstart', blockDrag);
-            document.removeEventListener('mousedown', blockMiddleClick);
+            document.removeEventListener('dragstart', blockDragSiteWide);
+            document.removeEventListener('mousedown', blockMiddleClickSiteWide);
         };
     }, []);
 
     return (
-        <ClickSpark sparkColor="#a78bfa" sparkSize={12} sparkRadius={20} sparkCount={8} duration={500}>
+        <ClickSpark sparkColor="#ffffff" sparkSize={12} sparkRadius={20} sparkCount={8} duration={500}>
             <LoadingSequencer />
-            <ParticleCanvas />
+            <FloatingLines 
+                linesGradient={['#cccccc', '#666666', '#333333']} 
+                animationSpeed={0.6}
+                parallax={true}
+                parallaxStrength={0.1}
+                blur={1}
+                brightness={0.7}
+            />
             <Dock />
             <ScrollToTop />
             <div id="app">
@@ -64,7 +71,6 @@ export default function App() {
                     <Route path="/" element={<HomePage />} />
                     <Route path="/about" element={<AboutPage />} />
                     <Route path="/music" element={<MusicPage />} />
-                    <Route path="/embeds" element={<EmbedsPage />} />
                     <Route path="/friends" element={<FriendsPage />} />
                 </Routes>
             </div>

@@ -1,12 +1,53 @@
 import { useState, useEffect } from 'react'
-import tracks from '../data/tracks.json'
+import { supabase } from '../lib/supabase'
 import LogoLoop from '../components/LogoLoop/LogoLoop'
 import Footer from '../components/Footer/Footer'
 import DecryptedText from '../components/DecryptedText/DecryptedText'
 import GlitchText from '../components/GlitchText/GlitchText'
+import ScrollReveal from '../components/ScrollReveal/ScrollReveal'
 import './MusicPage.css'
 
 export default function MusicPage() {
+    const [tracks, setTracks] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [, setHoveredColor] = useState(null)
+
+    useEffect(() => {
+        const fetchTracks = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('tracks')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                
+                if (error) throw error
+                setTracks(data || [])
+            } catch (err) {
+                console.error('Error fetching tracks:', err)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchTracks()
+
+        // Subscribe to real-time changes
+        const channel = supabase
+            .channel('tracks-realtime')
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'tracks' },
+                () => {
+                    fetchTracks()
+                }
+            )
+            .subscribe()
+
+        return () => {
+            supabase.removeChannel(channel)
+        }
+    }, [])
+
     // Completely disable right-click, drag, text selection, and middle-click on this page
     useEffect(() => {
         const block = (e) => e.preventDefault();
@@ -22,32 +63,41 @@ export default function MusicPage() {
             document.removeEventListener('mousedown', blockMouse);
         };
     }, []);
-    const [, setHoveredColor] = useState(null)
+
+    const getArtworkUrl = (filename) => {
+        // Construct public URL for artwork from Supabase Storage
+        const { data } = supabase.storage.from('artwork').getPublicUrl(filename)
+        return data.publicUrl
+    }
+
+
 
     return (
         <>
             <main className="artists-listing-page">
                 {/* ── Hero ──────────────────────────────────────── */}
-                <section className="artists-page-hero">
-                    <div className="hero-card" style={{ padding: '24px 40px', maxWidth: '480px', margin: '0 auto' }}>
-                        <h1 className="embed-gradient-text" style={{ fontSize: 'clamp(1.6rem, 4vw, 2.2rem)' }}>
-                            <DecryptedText text="Music" animateOn="view" sequential={true} speed={25} />
-                        </h1>
-                        <p style={{ fontSize: '0.9rem' }}>
-                            <DecryptedText text="The visuals behind every release." animateOn="view" sequential={true} speed={15} />
-                        </p>
-                        <div className="glow-bar" />
-                    </div>
-                </section>
+                <ScrollReveal>
+                    <section className="artists-page-hero">
+                        <div className="hero-card" style={{ padding: '24px 40px', maxWidth: '480px', margin: '0 auto' }}>
+                            <h1 className="embed-gradient-text" style={{ fontSize: 'clamp(1.6rem, 4vw, 2.2rem)' }}>
+                                <DecryptedText text="Music" animateOn="view" sequential={true} speed={25} />
+                            </h1>
+                            <p style={{ fontSize: '0.9rem' }}>
+                                <DecryptedText text="The visuals behind every release." animateOn="view" sequential={true} speed={15} />
+                            </p>
+                            <div className="glow-bar" />
+                        </div>
+                    </section>
+                </ScrollReveal>
 
                 {/* ── Gallery ──────────────────────────────── */}
                 <section className="art-gallery-section">
                     <div id="art-gallery" className="art-gallery-grid">
                         {tracks.map((track, i) => {
-                            const accent = track.accentColor
+                            const accent = track.accent_color
                             const glowColor = accent
                                 ? `hsla(${accent.hue}, ${accent.sat}%, 60%, 0.6)`
-                                : 'rgba(139, 92, 246, 0.6)'
+                                : 'rgba(255, 255, 255, 0.4)'
                             const glitchAfter = accent
                                 ? `hsl(${(accent.hue + 30) % 360}, ${accent.sat}%, 55%)`
                                 : 'red'
@@ -56,58 +106,73 @@ export default function MusicPage() {
                                 : 'cyan'
 
                             return (
-                                <a
-                                    key={track.title}
-                                    href={track.link || '#'}
-                                    target={track.link ? '_blank' : undefined}
-                                    rel={track.link ? 'noopener noreferrer' : undefined}
-                                    className="art-card"
-                                    style={{
-                                        animationDelay: `${i * 0.08}s`,
-                                        '--glow-color': glowColor,
-                                    }}
-                                    title={track.title}
-                                    onMouseEnter={() => setHoveredColor(accent || null)}
-                                    onMouseLeave={() => setHoveredColor(null)}
+                                <ScrollReveal
+                                    key={track.id}
+                                    delay={(i % 4) * 0.1} // Modulo to reset stagger timing per row
+                                    distance={25}
                                 >
-                                    <div className="art-card-inner">
-                                        <img
-                                            src={`/Assets/Artwork/${track.artwork}`}
-                                            alt={`${track.title} artwork`}
-                                            className="art-card-image"
-                                            loading="lazy"
-                                        />
-                                        <div className="art-card-overlay">
-                                            <GlitchText speed={1.2} enableShadows={true} enableOnHover={false} className="art-card-title" afterColor={glitchAfter} beforeColor={glitchBefore}>
-                                                {track.title}
-                                            </GlitchText>
-                                            <div className="art-card-meta">
-                                                <span className="art-card-type">{track.type}</span>
-                                                <span className="art-card-year">{track.year}</span>
-                                                {track.status === 'Upcoming' && (
-                                                    <span className="art-card-upcoming">Upcoming</span>
+                                    <a
+                                        href={track.link || '#'}
+                                        target={track.link ? '_blank' : undefined}
+                                        rel={track.link ? 'noopener noreferrer' : undefined}
+                                        className="art-card"
+                                        style={{
+                                            '--glow-color': glowColor,
+                                        }}
+                                        title={track.title}
+                                        onMouseEnter={() => setHoveredColor(accent || null)}
+                                        onMouseLeave={() => setHoveredColor(null)}
+                                    >
+                                        <div className="art-card-inner">
+                                            <img
+                                                src={getArtworkUrl(track.artwork)}
+                                                alt={`${track.title} artwork`}
+                                                className="art-card-image"
+                                                loading="lazy"
+                                                onError={(e) => {
+                                                    // Fallback to local if Supabase fails (useful during migration)
+                                                    if (!e.target.src.includes('/Assets/Artwork/')) {
+                                                        e.target.src = `/Assets/Artwork/${track.artwork}`
+                                                    }
+                                                }}
+                                            />
+                                            <div className="art-card-overlay">
+                                                <GlitchText speed={1.2} enableShadows={true} enableOnHover={false} className="art-card-title" afterColor={glitchAfter} beforeColor={glitchBefore}>
+                                                    {track.title}
+                                                </GlitchText>
+                                                <div className="art-card-meta">
+                                                    <span className="art-card-type">{track.type}</span>
+                                                    <span className="art-card-year">{track.year}</span>
+                                                    {track.status === 'Upcoming' && (
+                                                        <span className="art-card-upcoming">Upcoming</span>
+                                                    )}
+                                                </div>
+                                                {track.link && (
+                                                    <div className="art-card-external">
+                                                        <svg viewBox="0 0 24 24">
+                                                            <path d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
+                                                        </svg>
+                                                    </div>
                                                 )}
                                             </div>
-                                            {track.link && (
-                                                <div className="art-card-external">
-                                                    <svg viewBox="0 0 24 24">
-                                                        <path d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
-                                                    </svg>
-                                                </div>
-                                            )}
                                         </div>
-                                    </div>
-                                </a>
+                                    </a>
+                                </ScrollReveal>
                             )
                         })}
                     </div>
                 </section>
 
                 {/* ── Logo Loop ────────────────────────────────── */}
-                <LogoLoop />
+                <ScrollReveal delay={0.2}>
+                    <LogoLoop />
+                </ScrollReveal>
             </main>
 
-            <Footer />
+            <ScrollReveal direction="none" distance={0}>
+                <Footer />
+            </ScrollReveal>
         </>
     )
 }
+

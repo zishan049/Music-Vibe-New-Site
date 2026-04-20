@@ -70,8 +70,8 @@
 .friends-visit-btn {
     padding: 10px 32px;
     border-radius: 50px;
-    border: 1px solid rgba(139, 92, 246, 0.4);
-    background: rgba(139, 92, 246, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
     color: #fff;
     font-size: 0.85rem;
     font-weight: 700;
@@ -81,13 +81,14 @@
     transition: all 0.25s ease;
     z-index: 50;
     position: relative;
+    backdrop-filter: blur(10px);
 }
 
 .friends-visit-btn:hover {
-    background: rgba(139, 92, 246, 0.55);
-    border-color: rgba(139, 92, 246, 0.7);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
     transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(139, 92, 246, 0.4);
+    box-shadow: 0 6px 24px rgba(255, 255, 255, 0.15);
 }
 
 @keyframes dropdownFadeIn {

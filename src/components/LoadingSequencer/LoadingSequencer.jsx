@@ -1,23 +1,12 @@
 import { useState, useEffect } from 'react'
 import { SOCIAL_ICONS, SOCIAL_LABELS } from '../../data/socialIcons'
-import useImagePreloader from '../../hooks/useImagePreloader'
-import tracks from '../../data/tracks.json'
 import './LoadingSequencer.css'
 
 /**
  * LoadingSequencer — cinematic 2-phase loading screen
  * Phase 1: Colorful social pills fade in staggered → exit right-to-left
- *          + Image preloader runs in the background with progress bar
  * Phase 2: Logo scales in CENTER → title reveal → reposition UP to homepage → fade out
- *          Only exits after preload is confirmed complete
  */
-
-// Preload artwork images and important new friend assets
-const PRELOAD_IMAGES = [
-    ...tracks.map(t => `/Assets/Artwork/${t.artwork}`),
-    '/Assets/Friends/Cyu.png',
-    '/Assets/Friends/CyuBackground.png'
-]
 
 const SOCIAL_PILLS = [
     { key: 'instagram', color: '#E1306C', shadow: 'rgba(225, 48, 108, 0.4)' },
@@ -33,9 +22,6 @@ export default function LoadingSequencer() {
     const [visible, setVisible] = useState(() => !sessionStorage.getItem('musicvibe_loaded'))
     const [phase, setPhase] = useState('init')
     // phases: init → socials → exit-icons → phase2-logo → phase2-text → phase2-reposition → phase2-exit → done
-
-    // Preload all images during Phase 1
-    const { progress, isComplete: preloadDone } = useImagePreloader(visible ? PRELOAD_IMAGES : [])
 
     useEffect(() => {
         if (!visible) return
@@ -62,22 +48,14 @@ export default function LoadingSequencer() {
     }, [visible])
 
     // Phase 2 exit: fire after reaching reposition phase
-    // Prefers waiting for preload, but has a hard 3s max wait to never get stuck
     useEffect(() => {
         if (!visible) return
         if (phase !== 'phase2-reposition') return
 
-        if (preloadDone) {
-            // Preload already done — exit after 1.5s
-            const exitTimer = setTimeout(() => setPhase('phase2-exit'), 1500)
-            return () => clearTimeout(exitTimer)
-        }
-
-        // Preload not done yet — hard timeout: exit after 3s regardless
-        const hardTimeout = setTimeout(() => setPhase('phase2-exit'), 3000)
-
-        return () => clearTimeout(hardTimeout)
-    }, [visible, phase, preloadDone])
+        // Exit after 1.5s in the repositioned state
+        const exitTimer = setTimeout(() => setPhase('phase2-exit'), 1500)
+        return () => clearTimeout(exitTimer)
+    }, [visible, phase])
 
     // Done: Remove from DOM after exit animation
     useEffect(() => {
@@ -125,18 +103,6 @@ export default function LoadingSequencer() {
                 </div>
             </div>
 
-            {/* ── Preload Progress Bar ── */}
-            <div className={`zl-progress-container ${isPhase2 && preloadDone ? 'zl-progress-hide' : ''}`}>
-                <div
-                    className="zl-progress-bar"
-                    style={{ transform: `scaleX(${progress})` }}
-                />
-                <div
-                    className="zl-progress-glow"
-                    style={{ left: `${progress * 100}%` }}
-                />
-            </div>
-
             {/* ── Phase 2: Logo + Title ── */}
             <div className={`zl-p2 ${isPhase2 ? 'zl-p2-active' : ''} ${isRepositioned ? 'zl-p2-repositioned' : ''
                 } ${isExiting ? 'zl-p2-exit' : ''}`}>
@@ -155,3 +121,4 @@ export default function LoadingSequencer() {
         </div>
     )
 }
+
