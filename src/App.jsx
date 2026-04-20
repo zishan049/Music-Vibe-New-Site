@@ -1,7 +1,7 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import Dock from './components/Dock/Dock'
-import FloatingLines from './components/FloatingLines/FloatingLines'
+
 import LoadingSequencer from './components/LoadingSequencer/LoadingSequencer'
 import ClickSpark from './components/ClickSpark/ClickSpark'
 import HomePage from './pages/HomePage'
@@ -56,14 +56,7 @@ export default function App() {
     return (
         <ClickSpark sparkColor="#ffffff" sparkSize={12} sparkRadius={20} sparkCount={8} duration={500}>
             <LoadingSequencer />
-            <FloatingLines 
-                linesGradient={['#cccccc', '#666666', '#333333']} 
-                animationSpeed={0.6}
-                parallax={true}
-                parallaxStrength={0.1}
-                blur={1}
-                brightness={0.7}
-            />
+
             <Dock />
             <ScrollToTop />
             <div id="app">
