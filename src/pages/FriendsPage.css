@@ -2,125 +2,159 @@
    FriendsPage — Layout, Dropdown & Responsive
    ═══════════════════════════════════════════════════════ */
 
-.friends-page {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-    padding-bottom: 120px;
+.friends-root {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    background: transparent;
+    overflow-x: hidden;
 }
 
-/* ── Menu Section ────────────────────── */
-.friends-menu-section {
-    padding: 20px 0 60px;
+/* ── Friends Hero ────────────────────────────────────── */
+.friends-hero {
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 24px 60px;
+    text-align: center;
 }
 
-.friends-menu-wrapper {
-    max-width: 900px;
+.friends-hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 10vw, 8rem);
+    line-height: 0.9;
+    margin-bottom: 24px;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.friends-hero p {
+    font-size: clamp(0.9rem, 1.5vw, 1.2rem);
+    color: var(--text-secondary);
+    max-width: 500px;
+    margin: 0 auto 32px;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+}
+
+/* ── Friends Grid ────────────────────── */
+.friends-grid-section {
+    padding: 40px 0 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+}
+
+.friends-row-container {
+    width: 100%;
+}
+
+.friends-grid {
+    max-width: 1400px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 380px));
+    justify-content: center;
+    gap: 40px;
+    padding: 0 40px;
 }
 
-.friends-menu-entry {
-    position: relative;
-}
-
-.friends-menu-entry .menu-wrap {
-    border-radius: 12px;
-}
-
-.friends-menu-entry .menu__item-link {
-    font-size: clamp(1rem, 2.5vw, 1.6rem);
-    padding: 0.8em 0.5em;
-    font-family: 'Montserrat', 'Noto Sans', sans-serif;
-}
-
-.friends-menu-entry .marquee__part {
-    font-size: clamp(1rem, 2.5vw, 1.6rem);
-    font-family: 'Montserrat', 'Noto Sans', sans-serif;
-}
-
-/* ── Dropdown ────────────────────────── */
-.friends-dropdown {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-        opacity 0.4s ease;
-    opacity: 0;
-}
-
-.friends-dropdown.open {
-    max-height: 600px;
-    opacity: 1;
-}
-
-.friends-dropdown-inner {
+.friend-card-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 32px 16px 40px;
-    background: transparent;
-
-    border: none;
-    animation: dropdownFadeIn 0.4s ease forwards;
     gap: 20px;
+    padding: 40px 24px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.friend-card-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: radial-gradient(circle at top center, rgba(255,255,255,0.05) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.friend-card-wrapper:hover {
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.friend-card-wrapper:hover::before {
+    opacity: 1;
 }
 
 .friends-visit-btn {
-    padding: 10px 32px;
+    padding: 12px 32px;
     border-radius: 50px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.05);
     color: #fff;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 700;
     cursor: pointer;
-    letter-spacing: 1px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    transition: all 0.25s ease;
-    z-index: 50;
-    position: relative;
-    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    z-index: 5;
+    backdrop-filter: blur(5px);
 }
 
 .friends-visit-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(255, 255, 255, 0.15);
-}
-
-@keyframes dropdownFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-12px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    background: #fff;
+    color: #000;
+    border-color: #fff;
+    transform: scale(1.05);
 }
 
 /* ── Responsive ──────────────────────── */
-@media (max-width: 768px) {
-    .friends-page {
-        padding: 0 16px;
-        padding-bottom: 80px;
-    }
-
-    .friends-menu-wrapper {
-        grid-template-columns: 1fr;
-    }
-
-    .friends-dropdown-inner {
-        padding: 24px 12px 32px;
+@media (max-width: 1024px) {
+    .friends-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+        padding: 0 30px;
     }
 }
 
-@media (max-width: 480px) {
-    .friends-dropdown-inner {
-        padding: 20px 8px 24px;
+@media (max-width: 768px) {
+    .friends-hero {
+        min-height: 40vh;
+        padding-top: 100px;
     }
+    .friends-hero h1 {
+        font-size: clamp(2.5rem, 12vw, 4.5rem);
+    }
+    .friends-grid {
+        grid-template-columns: 1fr;
+        padding: 0 20px;
+    }
+    .friend-card-wrapper {
+        padding: 30px 20px;
+    }
+}
+
+@media (max-width: 420px) {
+    .friends-hero { padding-top: 80px; }
+    .friends-grid-section { padding: 40px 0 80px; }
+    .friend-card-wrapper { padding: 24px 16px; }
+}
+
+@media (max-width: 320px) {
+    .friends-hero h1 { font-size: 1.8rem; }
+    .friends-hero p { font-size: 0.85rem; }
 }

@@ -1,13 +1,17 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import Dock from './components/Dock/Dock'
+import FloatingLines from './components/FloatingLines/FloatingLines'
 
-import LoadingSequencer from './components/LoadingSequencer/LoadingSequencer'
 import ClickSpark from './components/ClickSpark/ClickSpark'
-import HomePage from './pages/HomePage'
-import AboutPage from './pages/AboutPage'
-import MusicPage from './pages/MusicPage'
-import FriendsPage from './pages/FriendsPage'
+
+// Lazy load pages for performance
+const HomePage = lazy(() => import('./pages/HomePage'))
+const AboutPage = lazy(() => import('./pages/AboutPage'))
+const MusicPage = lazy(() => import('./pages/MusicPage'))
+const FriendsPage = lazy(() => import('./pages/FriendsPage'))
+
 
 function ScrollToTop() {
     const { pathname } = useLocation()
@@ -53,19 +57,36 @@ export default function App() {
         };
     }, []);
 
+    const location = useLocation();
+
     return (
         <ClickSpark sparkColor="#ffffff" sparkSize={12} sparkRadius={20} sparkCount={8} duration={500}>
-            <LoadingSequencer />
+            <FloatingLines 
+                brightness={0.8}
+                animationSpeed={0.5}
+            />
 
             <Dock />
             <ScrollToTop />
             <div id="app">
-                <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/about" element={<AboutPage />} />
-                    <Route path="/music" element={<MusicPage />} />
-                    <Route path="/friends" element={<FriendsPage />} />
-                </Routes>
+                <Suspense fallback={null}>
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={location.pathname}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        >
+                            <Routes location={location}>
+                                <Route path="/" element={<HomePage />} />
+                                <Route path="/about" element={<AboutPage />} />
+                                <Route path="/music" element={<MusicPage />} />
+                                <Route path="/friends" element={<FriendsPage />} />
+                            </Routes>
+                        </motion.div>
+                    </AnimatePresence>
+                </Suspense>
             </div>
         </ClickSpark>
     )

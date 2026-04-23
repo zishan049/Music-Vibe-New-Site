@@ -1,15 +1,25 @@
+import { useEffect } from 'react'
+import './AboutPage.css'
 import SocialLinks from '../components/SocialLinks/SocialLinks'
 import Footer from '../components/Footer/Footer'
 import DecryptedText from '../components/DecryptedText/DecryptedText'
 import ScrollReveal from '../components/ScrollReveal/ScrollReveal'
 
 export default function AboutPage() {
+    useEffect(() => {
+        document.title = 'About | Music Vibe'
+        const metaDesc = document.querySelector('meta[name="description"]')
+        if (metaDesc) {
+            metaDesc.setAttribute('content', 'Learn about the journey of Music Vibe, an independent artist crafting emotions through sound.')
+        }
+    }, [])
+
     return (
-        <>
-            <main className="artists-listing-page">
-                <ScrollReveal>
-                    <section className="artists-page-hero">
-                        <div className="hero-card">
+        <div className="about-root">
+            <main className="about-main">
+                <section className="about-hero gpu-accelerate">
+                    <ScrollReveal>
+                        <div className="about-hero-content">
                             <h1>
                                 <DecryptedText text="About" animateOn="view" sequential={true} speed={25} />
                             </h1>
@@ -18,14 +28,14 @@ export default function AboutPage() {
                             </p>
                             <div className="glow-bar" />
                         </div>
-                    </section>
-                </ScrollReveal>
+                    </ScrollReveal>
+                </section>
 
-                <section className="about-content-section">
-                    <div className="about-grid-container">
+                <section className="about-grid-section section-optimize">
+                    <div className="about-grid">
                         {/* ── The Beginning ────────────────────────────── */}
                         <ScrollReveal delay={0.1}>
-                            <article className="about-card">
+                            <article className="about-card gpu-accelerate">
                                 <div className="about-card-icon">
                                     <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" />
@@ -42,7 +52,7 @@ export default function AboutPage() {
 
                         {/* ── The Sound ────────────────────────────────── */}
                         <ScrollReveal delay={0.2}>
-                            <article className="about-card">
+                            <article className="about-card gpu-accelerate">
                                 <div className="about-card-icon">
                                     <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
@@ -60,26 +70,26 @@ export default function AboutPage() {
                 </section>
 
                 {/* ── Social Links Section ──────────────────────── */}
-                <ScrollReveal>
-                    <section className="about-social-section">
+                <section className="about-socials section-optimize">
+                    <ScrollReveal>
                         <h2 className="gradient-title">Connect With Me</h2>
                         <p>Follow the journey and stay updated with the latest releases</p>
                         <SocialLinks className="about-social-icons" />
-                    </section>
-                </ScrollReveal>
+                    </ScrollReveal>
+                </section>
 
-                <ScrollReveal delay={0.1}>
-                    <section className="artists-cta-section" id="contact">
+                <section className="about-cta section-optimize" id="contact">
+                    <ScrollReveal delay={0.1}>
                         <h2>Get in Touch</h2>
                         <p>For bookings, collaborations, or just to say hi.</p>
                         <a href="https://discord.gg/PJXdZtDMKF" className="cta">CONTACT ME</a>
-                    </section>
-                </ScrollReveal>
+                    </ScrollReveal>
+                </section>
             </main>
 
             <ScrollReveal direction="none" distance={0}>
                 <Footer />
             </ScrollReveal>
-        </>
+        </div>
     )
 }

@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import FlowingMenu from '../components/FlowingMenu/FlowingMenu'
 import ProfileCard from '../components/ProfileCard/ProfileCard'
 import DecryptedText from '../components/DecryptedText/DecryptedText'
 import LogoLoop from '../components/LogoLoop/LogoLoop'
@@ -9,10 +8,16 @@ import ScrollReveal from '../components/ScrollReveal/ScrollReveal'
 import './FriendsPage.css'
 
 export default function FriendsPage() {
+    useEffect(() => {
+        document.title = 'Friends | Music Vibe'
+        const metaDesc = document.querySelector('meta[name="description"]')
+        if (metaDesc) {
+            metaDesc.setAttribute('content', 'Meet the community and partners of Music Vibe. A network of independent creators and collaborators.')
+        }
+    }, [])
+
     const [friends, setFriends] = useState([])
     const [loading, setLoading] = useState(true)
-    const [expandedIndex, setExpandedIndex] = useState(null)
-    const dropdownRefs = useRef([])
 
     useEffect(() => {
         async function fetchFriends() {
@@ -84,32 +89,14 @@ export default function FriendsPage() {
         };
     }, []);
 
-    /* Toggle dropdown on menu-item click */
-    const handleItemClick = (index) => {
-        setExpandedIndex(prev => (prev === index ? null : index))
-    }
-
-    /* Smooth scroll to opened card */
-    useEffect(() => {
-        if (expandedIndex !== null && dropdownRefs.current[expandedIndex]) {
-            setTimeout(() => {
-                dropdownRefs.current[expandedIndex]?.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest',
-                })
-            }, 350)
-        }
-    }, [expandedIndex])
-
-
 
     return (
-        <>
-            <main className="friends-page">
+        <div className="friends-root">
+            <main className="friends-main">
                 {/* ── Hero ─────────────────────── */}
-                <ScrollReveal>
-                    <section className="artists-page-hero">
-                        <div className="hero-card">
+                <section className="friends-hero gpu-accelerate">
+                    <ScrollReveal>
+                        <div className="friends-hero-content">
                             <h1>
                                 <DecryptedText text="Friends" animateOn="view" sequential={true} speed={25} />
                             </h1>
@@ -123,65 +110,66 @@ export default function FriendsPage() {
                             </p>
                             <div className="glow-bar" />
                         </div>
-                    </section>
-                </ScrollReveal>
+                    </ScrollReveal>
+                </section>
 
-                {/* ── Menu + Dropdowns ─────────── */}
-                <section className="friends-menu-section">
-                    <div className="friends-menu-wrapper">
-                        {friends.map((friend, idx) => (
-                            <ScrollReveal
-                                key={idx}
-                                delay={(idx % 2) * 0.1} // Modulo since it's a 2-column grid
-                                distance={20}
-                            >
-                                <div className="friends-menu-entry">
-                                    {/* Single menu item rendered inline */}
-                                    <FlowingMenu
-                                        items={[{
-                                            text: friend.name,
-                                            image: friend.image,
-                                            bgSize: friend.bg_size,
-                                            link: '#',
-                                        }]}
-                                        onItemClick={() => handleItemClick(idx)}
-                                        speed={12}
-                                        bgColor="transparent"
-                                        textColor="#f5f5f5"
-                                        marqueeBgColor="rgba(255, 255, 255, 0.1)"
-                                        marqueeTextColor="#fff"
-                                        borderColor="rgba(255,255,255,0.08)"
-                                    />
-                                    
-                                    {/* Dropdown Profile Card */}
-                                    <div
-                                        ref={el => (dropdownRefs.current[idx] = el)}
-                                        className={`friends-dropdown ${expandedIndex === idx ? 'open' : ''}`}
-                                    >
-                                        <div className="friends-dropdown-inner">
-                                            <ProfileCard
-                                                avatarUrl={friend.avatarUrl}
-                                                name={friend.name}
-                                                handle={friend.handle}
-                                                title={friend.title}
-                                                status={friend.status}
-                                                showUserInfo={false}
-                                                behindGlowColor="rgba(255, 255, 255, 0.4)"
-                                            />
-                                            {friend.site_url && (
-                                                <button
-                                                    className="friends-visit-btn"
-                                                    onClick={() => window.open(friend.site_url, '_blank', 'noopener,noreferrer')}
-                                                    type="button"
-                                                >
-                                                    Visit Site
-                                                </button>
-                                            )}
-                                        </div>
+                {/* ── Friends Grid ─────────── */}
+                <section className="friends-grid-section section-optimize">
+                    {/* Row 1: Friends with Links */}
+                    <div className="friends-row-container">
+                        <div className="friends-grid">
+                            {friends.filter(f => f.site_url).map((friend, idx) => (
+                                <ScrollReveal
+                                    key={friend.id || idx}
+                                    delay={(idx % 4) * 0.1}
+                                    distance={30}
+                                >
+                                    <div className="friend-card-wrapper">
+                                        <ProfileCard
+                                            avatarUrl={friend.avatarUrl}
+                                            name={friend.name}
+                                            handle={friend.handle}
+                                            title={friend.title}
+                                            status={friend.status}
+                                            showUserInfo={false}
+                                            behindGlowColor="rgba(255, 255, 255, 0.4)"
+                                        />
+                                        <button
+                                            className="friends-visit-btn"
+                                            onClick={() => window.open(friend.site_url, '_blank', 'noopener,noreferrer')}
+                                            type="button"
+                                        >
+                                            Visit Site
+                                        </button>
                                     </div>
-                                </div>
-                            </ScrollReveal>
-                        ))}
+                                </ScrollReveal>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Row 2: Friends without Links */}
+                    <div className="friends-row-container second-row">
+                        <div className="friends-grid">
+                            {friends.filter(f => !f.site_url).map((friend, idx) => (
+                                <ScrollReveal
+                                    key={friend.id || idx}
+                                    delay={(idx % 4) * 0.1}
+                                    distance={30}
+                                >
+                                    <div className="friend-card-wrapper">
+                                        <ProfileCard
+                                            avatarUrl={friend.avatarUrl}
+                                            name={friend.name}
+                                            handle={friend.handle}
+                                            title={friend.title}
+                                            status={friend.status}
+                                            showUserInfo={false}
+                                            behindGlowColor="rgba(255, 255, 255, 0.4)"
+                                        />
+                                    </div>
+                                </ScrollReveal>
+                            ))}
+                        </div>
                     </div>
                 </section>
             </main>
@@ -192,6 +180,6 @@ export default function FriendsPage() {
             <ScrollReveal direction="none" distance={0}>
                 <Footer />
             </ScrollReveal>
-        </>
+        </div>
     )
 }

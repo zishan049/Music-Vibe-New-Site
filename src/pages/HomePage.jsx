@@ -1,15 +1,98 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'motion/react'
 import { supabase } from '../lib/supabase'
 import SocialLinks from '../components/SocialLinks/SocialLinks'
 import LogoLoop from '../components/LogoLoop/LogoLoop'
 import Footer from '../components/Footer/Footer'
-import DecryptedText from '../components/DecryptedText/DecryptedText'
 import ScrollReveal from '../components/ScrollReveal/ScrollReveal'
+import './HomePage.css'
 
+/* ── Marquee items ────────────────────────────────── */
+const MARQUEE_ITEMS = [
+    'Music Vibe', 'Emotions in Motion', 'Independent Artist',
+    'Original Releases', 'Streaming Now', 'Music Vibe',
+    'Emotions in Motion', 'Independent Artist', 'Original Releases', 'Streaming Now',
+]
+
+/* ── Stats strip data ─────────────────────────────── */
+const STATS = [
+    { label: 'Genre', value: 'Electronic', sub: 'Ambient · Experimental' },
+    { label: 'Since', value: '2024', sub: 'Based in India' },
+    { label: 'Available On', value: '6+', sub: 'Streaming Platforms' },
+]
+
+/* ── Word-split hero animation ────────────────────── */
+function HeroWord({ word, delay }) {
+    return (
+        <motion.span
+            className="hp-hero__word"
+            initial={{ clipPath: 'inset(0 0 110% 0)', opacity: 0, y: 40 }}
+            animate={{ clipPath: 'inset(0 0 0% 0)', opacity: 1, y: 0 }}
+            transition={{
+                duration: 1.05,
+                delay,
+                ease: [0.16, 1, 0.3, 1],
+            }}
+        >
+            {word}
+        </motion.span>
+    )
+}
+
+/* ── Release Card ─────────────────────────────────── */
+function ReleaseCard({ track, index, getArtworkUrl }) {
+    return (
+        <Link
+            to="/music"
+            className="hp-release-card"
+            aria-label={`Listen to ${track.title}`}
+        >
+            {/* Artwork */}
+            <div className="hp-release-card__img-wrap">
+                <img
+                    className="hp-release-card__img"
+                    src={getArtworkUrl(track.artwork)}
+                    alt={track.title}
+                    loading="lazy"
+                    onError={(e) => {
+                        if (!e.target.src.includes('/Assets/Artwork/')) {
+                            e.target.src = `/Assets/Artwork/${track.artwork}`
+                        }
+                    }}
+                />
+                {track.status === 'Upcoming' && (
+                    <span className="hp-release-card__upcoming">Upcoming</span>
+                )}
+                <div className="hp-release-card__play">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                </div>
+            </div>
+
+            {/* Info */}
+            <div className="hp-release-card__info">
+                <span className="hp-release-card__num">
+                    {String(index + 1).padStart(2, '0')}
+                </span>
+                <h3 className="hp-release-card__title">{track.title}</h3>
+                <p className="hp-release-card__meta">
+                    {track.type} · {track.year}
+                </p>
+            </div>
+        </Link>
+    )
+}
+
+/* ═══════════════════════════════════════════════════
+   MAIN COMPONENT
+   ═══════════════════════════════════════════════════ */
 export default function HomePage() {
     const [tracks, setTracks] = useState([])
+    const heroRef = useRef(null)
 
+    /* ── Supabase fetch + realtime ────────────────── */
     useEffect(() => {
         const fetchTracks = async () => {
             try {
@@ -17,142 +100,308 @@ export default function HomePage() {
                     .from('tracks')
                     .select('*')
                     .order('created_at', { ascending: false })
-                
                 if (error) throw error
                 setTracks(data || [])
             } catch (err) {
-                console.error('Error fetching tracks for homepage:', err)
+                console.error('Error fetching tracks:', err)
             }
         }
 
         fetchTracks()
 
-        // Subscribe to real-time changes
         const channel = supabase
             .channel('homepage-tracks-realtime')
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'tracks' },
-                () => {
-                    fetchTracks()
-                }
-            )
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'tracks' }, fetchTracks)
             .subscribe()
 
-        return () => {
-            supabase.removeChannel(channel)
+        return () => supabase.removeChannel(channel)
+    }, [])
+
+    useEffect(() => {
+        document.title = 'Music Vibe | Emotions in Motion'
+        const metaDesc = document.querySelector('meta[name="description"]')
+        if (metaDesc) {
+            metaDesc.setAttribute('content', 'Music Vibe - Independent artist exploring ambient, electronic, and experimental soundscapes. Music that moves with you.')
         }
     }, [])
 
+    /* ── Scroll-driven parallax ───────────────────── */
+    const { scrollYProgress } = useScroll({
+        target: heroRef,
+        offset: ['start start', 'end start'],
+    })
+
+    const rawTitleY = useTransform(scrollYProgress, [0, 1], [0, -110])
+    const titleY = useSpring(rawTitleY, { stiffness: 80, damping: 22 })
+
+    const rawHeroOpacity = useTransform(scrollYProgress, [0, 0.65], [1, 0])
+    const heroOpacity = useSpring(rawHeroOpacity, { stiffness: 100, damping: 25 })
+
+    const rawStrokeY = useTransform(scrollYProgress, [0, 1], [0, -55])
+    const strokeY = useSpring(rawStrokeY, { stiffness: 55, damping: 18 })
+
+    /* ── Artwork URL helper ───────────────────────── */
     const getArtworkUrl = (filename) => {
         const { data } = supabase.storage.from('artwork').getPublicUrl(filename)
         return data.publicUrl
     }
 
     return (
-        <div id="home-content">
-            <section className="content-section">
-                <ScrollReveal>
-                    <header>
-                        <img
-                            src="/Assets/musicvibe.png"
-                            alt="Music Vibe Logo"
-                            className="logo"
-                        />
-                        <h1>
-                            <DecryptedText text="Music Vibe" animateOn="view" sequential={true} speed={25} />
-                        </h1>
-                        <p className="tagline">
-                            <DecryptedText text="Emotions in Motion" animateOn="view" sequential={true} speed={20} />
-                        </p>
-                        <p style={{ color: 'var(--text-secondary)', marginTop: '12px' }}>
-                            Some days calm and dreamy, some days heavy and loud.
-                            <br />Music that moves with you.
-                        </p>
-                        <div className="glow-bar" />
+        <div id="home-content" className="hp-root">
 
-                        <SocialLinks className="home-social-icons" />
+            {/* ══════════════════════════════════════
+                HERO SECTION
+                ══════════════════════════════════════ */}
+            <section className="hp-hero" ref={heroRef}>
 
-                        <div className="cta-container">
-                            <Link to="/music" className="cta">LISTEN NOW</Link>
+
+                {/* ── Massive display type ── */}
+                <motion.div
+                    className="hp-hero__display"
+                    style={{ y: titleY, opacity: heroOpacity }}
+                >
+                    {/* Ghost stroke layer — parallax offset */}
+                    <motion.span
+                        className="hp-hero__title-stroke"
+                        aria-hidden="true"
+                        style={{ y: strokeY }}
+                    />
+
+                    {/* Solid title — word-by-word clip reveal */}
+                    <h1 className="hp-hero__title-group" aria-label="Music Vibe">
+                        <HeroWord word="Music" delay={0.2} />
+                        <HeroWord word="Vibe" delay={0.38} />
+                    </h1>
+                </motion.div>
+
+                {/* ── Bottom meta: tagline left, scroll + CTA right ── */}
+                <div className="hp-hero__bottom">
+
+                    {/* Tagline */}
+                    <motion.div
+                        className="hp-hero__tagline-wrap"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                        <p className="hp-hero__tagline">
+                            <span className="hp-hero__tagline-line hp-hero__tagline-line--strong">
+                                Some days calm and dreamy,
+                            </span>
+                            <span className="hp-hero__tagline-line">
+                                some days heavy and loud.
+                            </span>
+                            <span className="hp-hero__tagline-line hp-hero__tagline-line--accent">
+                                Music that moves with you.
+                            </span>
+                        </p>
+                    </motion.div>
+
+                    {/* Right column: social + CTA (no overlap with scroll) */}
+                    <div className="hp-hero__right">
+                        {/* Social pills — staggered entry matching LoadingSequencer Phase 1 */}
+                        <div className="hp-hero__social-wrap">
+                            {/* We wrap SocialLinks in a div with CSS stagger animation */}
+                            <motion.div
+                                className="hp-hero__social-anim"
+                                initial="hidden"
+                                animate="visible"
+                                variants={{
+                                    hidden: {},
+                                    visible: { transition: { staggerChildren: 0.09, delayChildren: 1.1 } }
+                                }}
+                            >
+                                <SocialLinksAnimated />
+                            </motion.div>
                         </div>
-                    </header>
+
+                        {/* CTA — below social */}
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.7, delay: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                        >
+                            <Link to="/music" className="hp-cta">
+                                <span>Listen Now</span>
+                                <span className="hp-cta__arrow">→</span>
+                            </Link>
+                        </motion.div>
+                    </div>
+                </div>
+
+                {/* Scroll indicator — fixed bottom-center, clear of CTA */}
+                <motion.div
+                    className="hp-hero__scroll"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 2.0 }}
+                >
+                    <div className="hp-hero__scroll-chars">
+                        {'SCROLL'.split('').map((ch, i) => (
+                            <span
+                                key={i}
+                                className="hp-hero__scroll-char"
+                                style={{ animationDelay: `${i * 0.12}s` }}
+                            >
+                                {ch}
+                            </span>
+                        ))}
+                    </div>
+                    <div className="hp-hero__scroll-line" />
+                </motion.div>
+
+                <div className="hp-hero__rule" />
+            </section>
+
+            {/* ══════════════════════════════════════
+                MARQUEE DIVIDER
+                ══════════════════════════════════════ */}
+            <div className="hp-marquee" aria-hidden="true">
+                <div className="hp-marquee__track">
+                    {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
+                        <span key={i} className="hp-marquee__item">
+                            {item}
+                            <span className="hp-marquee__dot" />
+                        </span>
+                    ))}
+                </div>
+            </div>
+
+            {/* ══════════════════════════════════════
+                STATS STRIP — 3-column info bar
+                ══════════════════════════════════════ */}
+            <ScrollReveal revealType="slide" duration={0.8} distance={30}>
+                <div className="hp-about-strip">
+                    <div className="hp-about-strip__inner">
+                        {STATS.map((stat, i) => (
+                            <React.Fragment key={stat.label}>
+                                <div className="hp-about-strip__cell">
+                                    <span className="hp-about-strip__cell-label">{stat.label}</span>
+                                    <span className="hp-about-strip__cell-value">{stat.value}</span>
+                                    <span className="hp-about-strip__cell-sub">{stat.sub}</span>
+                                </div>
+                                {i < STATS.length - 1 && (
+                                    <div className="hp-about-strip__divider" aria-hidden="true" />
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </div>
+                </div>
+            </ScrollReveal>
+
+            {/* ══════════════════════════════════════
+                ALL RELEASES — Card Grid
+                ══════════════════════════════════════ */}
+            <section className="hp-releases">
+                <ScrollReveal revealType="skew" distance={20} duration={0.8}>
+                    <div className="hp-releases__header">
+                        <div className="hp-releases__header-left">
+                            <span className="hp-releases__label">All Releases</span>
+                            {tracks.length > 0 && (
+                                <span className="hp-releases__count">
+                                    {String(tracks.length).padStart(2, '0')}
+                                </span>
+                            )}
+                        </div>
+                        {tracks.length > 0 && (
+                            <Link to="/music" className="hp-releases__view-all">
+                                View All →
+                            </Link>
+                        )}
+                    </div>
                 </ScrollReveal>
 
-                {/* ── All Releases ────────────────────────────────── */}
-                <section style={{ paddingTop: '20px' }}>
-                    <ScrollReveal>
-                        <h2 className="stream-section-title embed-gradient-text">All Releases</h2>
-                    </ScrollReveal>
-                    <div className="about-grid-container">
+                {tracks.length === 0 ? (
+                    <div className="hp-releases__empty">
+                        No releases yet — check back soon.
+                    </div>
+                ) : (
+                    <div className="hp-releases__grid">
                         {tracks.map((track, i) => (
-                            <ScrollReveal
-                                key={track.id}
-                                delay={i * 0.05}
-                                distance={20}
+                            <ScrollReveal 
+                                key={track.id} 
+                                revealType="blur" 
+                                delay={i * 0.06}
+                                distance={50}
+                                duration={1.4}
                             >
-                                <Link
-                                    to="/music"
-                                    className="about-card"
-                                    style={{
-                                        textDecoration: 'none',
-                                        color: 'inherit',
-                                        cursor: 'pointer',
-                                        display: 'block',
-                                    }}
-                                >
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                        <img
-                                            src={getArtworkUrl(track.artwork)}
-                                            alt={track.title}
-                                            style={{
-                                                width: '60px',
-                                                height: '60px',
-                                                borderRadius: '10px',
-                                                objectFit: 'cover',
-                                                flexShrink: 0,
-                                            }}
-                                            onError={(e) => {
-                                                if (!e.target.src.includes('/Assets/Artwork/')) {
-                                                    e.target.src = `/Assets/Artwork/${track.artwork}`
-                                                }
-                                            }}
-                                        />
-                                        <div>
-                                            <h3 style={{ marginBottom: '4px' }}>{track.title}</h3>
-                                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-                                                {track.type} · {track.year}
-                                                {track.status === 'Upcoming' && (
-                                                    <span style={{
-                                                        marginLeft: '8px',
-                                                        padding: '2px 8px',
-                                                        background: 'rgba(255, 255, 255, 0.1)',
-                                                        borderRadius: '12px',
-                                                        fontSize: '0.75rem',
-                                                        color: '#ffffff',
-                                                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                                                    }}>
-                                                        Upcoming
-                                                    </span>
-                                                )}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </Link>
+                                <ReleaseCard
+                                    track={track}
+                                    index={i}
+                                    getArtworkUrl={getArtworkUrl}
+                                />
                             </ScrollReveal>
                         ))}
                     </div>
-                </section>
-
-                {/* ── Logo Loop ────────────────────────────────────── */}
-                <ScrollReveal delay={0.2}>
-                    <LogoLoop />
-                </ScrollReveal>
+                )}
             </section>
 
-            <ScrollReveal direction="none" distance={0}>
-                <Footer />
-            </ScrollReveal>
+            {/* ══════════════════════════════════════
+                LOGO LOOP (preserved as-is)
+                ══════════════════════════════════════ */}
+            <div className="hp-loop-wrap">
+                <ScrollReveal revealType="scale" delay={0.1} distance={40} duration={1.1}>
+                    <LogoLoop />
+                </ScrollReveal>
+            </div>
+
+            {/* FOOTER */}
+            <div className="hp-footer-wrap">
+                <ScrollReveal direction="none" distance={0}>
+                    <Footer />
+                </ScrollReveal>
+            </div>
+
+        </div>
+    )
+}
+
+/* ── Animated Social Links ────────────────────────────
+   Mirrors LoadingSequencer Phase 1 pill animation:
+   each pill slides up from Y+20 + fades in, staggered
+   ─────────────────────────────────────────────────── */
+import { SOCIAL_ICONS, SOCIAL_LABELS } from '../data/socialIcons'
+import socialsData from '../data/socials.json'
+
+const pillVariant = {
+    hidden: {
+        opacity: 0,
+        y: 20,
+        scale: 0.94,
+    },
+    visible: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: {
+            duration: 0.65,
+            ease: [0.16, 1, 0.3, 1],
+        },
+    },
+}
+
+function SocialLinksAnimated() {
+    const activeSocials = Object.entries(socialsData).filter(([, url]) => url)
+
+    return (
+        <div className="artist-social-links hp-hero__social">
+            {activeSocials.map(([key, url]) => (
+                <motion.a
+                    key={key}
+                    href={url}
+                    className={`social-link ${key}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variants={pillVariant}
+                    whileHover={{
+                        y: -3,
+                        transition: { duration: 0.25, ease: [0.34, 1.56, 0.64, 1] }
+                    }}
+                >
+                    {SOCIAL_ICONS[key] || SOCIAL_ICONS.link}
+                    {SOCIAL_LABELS[key] || 'Link'}
+                </motion.a>
+            ))}
         </div>
     )
 }

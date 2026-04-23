@@ -46,6 +46,41 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
   min-height: calc(var(--vh, 1vh) * 100);
+  position: relative;
+}
+
+/* ── Global Grain Texture ───────────────────────────── */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.02;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: overlay;
+}
+
+/* ── Page Layout Utilities ────────────────────────────── */
+.page-root {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: transparent;
+  overflow-x: hidden;
+}
+
+.section-optimize {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 1000px;
+}
+
+.gpu-accelerate {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
 
 /* ── z-index Layering ──────────────────────────────────── */
@@ -500,9 +535,15 @@ footer {
 }
 
 /* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .content-section {
+    padding: 60px 32px;
+  }
+}
+
 @media (max-width: 768px) {
   .content-section {
-    padding: 40px 16px;
+    padding: 40px 24px;
   }
 
   header {
@@ -533,27 +574,57 @@ footer {
   }
 }
 
-/* ── Narrow Mobile (≤600px): hero-card padding + grid fix ── */
-@media (max-width: 600px) {
-  /* P1-Fix: reduce hero-card horizontal padding to prevent text crushing */
-  .hero-card {
-    padding: 28px 20px;
+/* ── Narrow Mobile (≤420px) ── */
+@media (max-width: 420px) {
+  h1 {
+    font-size: clamp(1.8rem, 8vw, 2.5rem);
   }
 
-  /* P1-Fix: force about-grid-container to single column — prevents
-     overflow at 320-375px where minmax(300px,1fr) exceeds viewport */
-  .about-grid-container {
-    grid-template-columns: 1fr;
+  h2 {
+    font-size: clamp(1.2rem, 6vw, 1.6rem);
+  }
+
+  .content-section {
+    padding: 32px 16px;
+  }
+
+  .hero-card {
+    padding: 24px 16px;
+    border-radius: var(--radius-sm);
   }
 }
 
-@media (max-width: 480px) {
-  h1 {
-    font-size: 1.8rem;
+/* ── Ultra Narrow (≤375px) ── */
+@media (max-width: 375px) {
+  .content-section {
+    padding: 24px 12px;
+  }
+  
+  .grid, .about-grid-container {
+    padding: 0 12px;
+    gap: 16px;
   }
 
-  .artists-page-hero,
-  .art-page-hero {
-    padding: 80px 0 30px;
+  .social-link {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+}
+
+/* ── Minimum Device Fix (320px) ── */
+@media (max-width: 320px) {
+  h1 {
+    font-size: 1.6rem;
+  }
+  
+  .cta {
+    padding: 10px 24px;
+    font-size: 0.8rem;
+    width: 100%; /* Full width buttons on tiny screens */
+    text-align: center;
+  }
+  
+  .hero-card {
+    padding: 20px 12px;
   }
 }

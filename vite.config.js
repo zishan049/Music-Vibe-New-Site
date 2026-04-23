@@ -6,5 +6,17 @@ export default defineConfig({
     server: {
         port: 3000,
         open: true
+    },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'vendor-three': ['three'],
+                    'vendor-motion': ['motion/react'],
+                    'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+                }
+            }
+        },
+        chunkSizeWarningLimit: 800
     }
 })

@@ -74,7 +74,7 @@ vec3 background_color(vec2 uv) {
 
   col += mix(ACCENT_2, BLACK, smoothstep(0.0, 1.0, abs(m)));
   col += mix(ACCENT_1, BLACK, smoothstep(0.0, 1.0, abs(m - 0.8)));
-  return col * 0.5;
+  return col * 0.2;
 }
 
 vec3 getLineColor(float t, vec3 baseColor) {
@@ -118,7 +118,7 @@ vec3 getLineColor(float t, vec3 baseColor) {
   }
 
   float m = uv.y - y;
-  return 0.0175 / max(abs(m) + 0.01, 1e-3) + 0.01;
+  return 0.0175 / max(abs(m) + 0.01, 1e-3);
 }
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
@@ -370,26 +370,28 @@ export default function FloatingLines({
 
     const clock = new Clock();
 
+    // Throttled Resize Handler
+    let resizeTimeout;
     const setSize = () => {
       if (!active) return;
       const width = container.clientWidth || 1;
       const height = container.clientHeight || 1;
 
       renderer.setSize(width, height, false);
-
       const canvasWidth = renderer.domElement.width;
       const canvasHeight = renderer.domElement.height;
       uniforms.iResolution.value.set(canvasWidth, canvasHeight, 1);
     };
 
+    const handleResize = () => {
+      if (resizeTimeout) cancelAnimationFrame(resizeTimeout);
+      resizeTimeout = requestAnimationFrame(setSize);
+    };
+
     setSize();
 
-    const ro =
-      typeof ResizeObserver !== 'undefined'
-        ? new ResizeObserver(() => {
-            if (!active) return;
-            setSize();
-          })
+    const ro = typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(handleResize)
         : null;
 
     if (ro) ro.observe(container);
@@ -422,8 +424,16 @@ export default function FloatingLines({
     }
 
     let raf = 0;
-    const renderLoop = () => {
+    let lastTime = 0;
+    const fpsLimit = 1 / 60; // Cap to 60fps for power saving
+
+    const renderLoop = (time) => {
       if (!active) return;
+      raf = requestAnimationFrame(renderLoop);
+
+      const delta = (time - lastTime) / 1000;
+      if (delta < fpsLimit) return;
+      lastTime = time;
 
       uniforms.iTime.value = clock.getElapsedTime();
 
@@ -440,14 +450,9 @@ export default function FloatingLines({
         uniforms.parallaxOffset.value.copy(currentParallaxRef.current);
       }
 
-      if (uniforms.brightness.value !== brightness) {
-        uniforms.brightness.value = brightness;
-      }
-
       renderer.render(scene, camera);
-      raf = requestAnimationFrame(renderLoop);
     };
-    renderLoop();
+    raf = requestAnimationFrame(renderLoop);
 
     return () => {
       active = false;

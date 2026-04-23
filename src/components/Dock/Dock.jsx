@@ -43,6 +43,7 @@ const DOCK_CONFIG = {
     distance: 160,
 }
 
+
 export default function Dock() {
     const wrapperRef = useRef(null)
     const mouseXRef = useRef(null)

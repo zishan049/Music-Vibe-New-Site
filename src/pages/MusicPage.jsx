@@ -8,6 +8,14 @@ import ScrollReveal from '../components/ScrollReveal/ScrollReveal'
 import './MusicPage.css'
 
 export default function MusicPage() {
+    useEffect(() => {
+        document.title = 'Music | Music Vibe'
+        const metaDesc = document.querySelector('meta[name="description"]')
+        if (metaDesc) {
+            metaDesc.setAttribute('content', 'Explore the discography of Music Vibe. Listen to the latest releases, singles, and experimental ambient tracks.')
+        }
+    }, [])
+
     const [tracks, setTracks] = useState([])
     const [loading, setLoading] = useState(true)
     const [, setHoveredColor] = useState(null)
@@ -65,7 +73,6 @@ export default function MusicPage() {
     }, []);
 
     const getArtworkUrl = (filename) => {
-        // Construct public URL for artwork from Supabase Storage
         const { data } = supabase.storage.from('artwork').getPublicUrl(filename)
         return data.publicUrl
     }
@@ -73,25 +80,25 @@ export default function MusicPage() {
 
 
     return (
-        <>
-            <main className="artists-listing-page">
+        <div className="music-root">
+            <main className="music-main">
                 {/* ── Hero ──────────────────────────────────────── */}
-                <ScrollReveal>
-                    <section className="artists-page-hero">
-                        <div className="hero-card" style={{ padding: '24px 40px', maxWidth: '480px', margin: '0 auto' }}>
-                            <h1 className="embed-gradient-text" style={{ fontSize: 'clamp(1.6rem, 4vw, 2.2rem)' }}>
+                <section className="music-hero gpu-accelerate">
+                    <ScrollReveal>
+                        <div className="music-hero-content">
+                            <h1>
                                 <DecryptedText text="Music" animateOn="view" sequential={true} speed={25} />
                             </h1>
-                            <p style={{ fontSize: '0.9rem' }}>
+                            <p>
                                 <DecryptedText text="The visuals behind every release." animateOn="view" sequential={true} speed={15} />
                             </p>
                             <div className="glow-bar" />
                         </div>
-                    </section>
-                </ScrollReveal>
+                    </ScrollReveal>
+                </section>
 
                 {/* ── Gallery ──────────────────────────────── */}
-                <section className="art-gallery-section">
+                <section className="art-gallery-section section-optimize">
                     <div id="art-gallery" className="art-gallery-grid">
                         {tracks.map((track, i) => {
                             const accent = track.accent_color
@@ -128,7 +135,8 @@ export default function MusicPage() {
                                                 src={getArtworkUrl(track.artwork)}
                                                 alt={`${track.title} artwork`}
                                                 className="art-card-image"
-                                                loading="lazy"
+                                                loading={i < 4 ? 'eager' : 'lazy'}
+                                                fetchPriority={i < 4 ? 'high' : 'auto'}
                                                 onError={(e) => {
                                                     // Fallback to local if Supabase fails (useful during migration)
                                                     if (!e.target.src.includes('/Assets/Artwork/')) {
@@ -172,7 +180,7 @@ export default function MusicPage() {
             <ScrollReveal direction="none" distance={0}>
                 <Footer />
             </ScrollReveal>
-        </>
+        </div>
     )
 }
 
