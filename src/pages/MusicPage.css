@@ -107,6 +107,7 @@
     border-radius: 14px;
     overflow: hidden;
     z-index: 2;
+    background: #0a0a0a; /* prevents white flash while images load */
 }
 
 .art-card-image {

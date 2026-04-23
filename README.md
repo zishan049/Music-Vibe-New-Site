@@ -1,6 +1,11 @@
-# <p align="center">🎵 MUSIC VIBE 🎵</p>
 <p align="center">
-  <i align="center">A Cinematic, Music-Focused Immersive Experience</i>
+  <img src="public/Assets/tp_logo.png" width="150" alt="Music Vibe Logo" />
+</p>
+
+<h1 align="center">Music Vibe</h1>
+
+<p align="center">
+  <i>A Cinematic, Music-Focused Immersive Experience</i>
 </p>
 
 <p align="center">
