@@ -180,7 +180,7 @@
 }
 
 .hp-cta:hover {
-  transform: translateX(8px) scale(1.02);
+  transform: scale(1.02);
   box-shadow: 0 10px 36px rgba(255, 255, 255, 0.22);
 }
 
@@ -188,14 +188,43 @@
   opacity: 1;
 }
 
-.hp-cta__arrow {
-  display: inline-block;
-  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+.hp-cta__blinker {
+  /* --- CONTROL PANEL --- */
+  --blinker-size: 20px;      /* Size */
+  --blinker-thickness: 0.5px; /* Thickness (Stroke) */
+  /* --------------------- */
+  
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--blinker-size);
+  height: var(--blinker-size);
+  margin-left: 12px;
+  vertical-align: middle;
+  transform: translateY(-1px);
 }
 
-.hp-cta:hover .hp-cta__arrow {
-  transform: translateX(5px);
+.hp-cta__blinker svg {
+  width: 100% !important;
+  height: 100% !important;
+  stroke: currentColor;
+  stroke-width: var(--blinker-thickness);
+  paint-order: stroke fill;
+  
+  /* Rendering Quality Hints */
+  shape-rendering: geometricPrecision;
+  vector-effect: non-scaling-stroke;
+  transform: translateZ(0); /* Force GPU */
+  backface-visibility: hidden;
+  image-rendering: -webkit-optimize-contrast;
 }
+
+/* --- Monochrome Quality Feel --- */
+.hp-cta__logo-unit { 
+  color: #000; 
+  transition: opacity 0.3s ease; 
+}
+
 
 /* ═══════════════════════════════════════════════════════
    SCROLL INDICATOR
@@ -296,7 +325,6 @@
   backface-visibility: hidden;
 }
 
-.hp-marquee__track:hover { animation-play-state: paused; }
 
 @keyframes hp-marquee-scroll {
   from { transform: translateX(0); }
@@ -455,7 +483,7 @@
   perspective: 1000px; /* Stabilize GPU transforms */
 }
 
-.hp-releases__grid::-webkit-scrollbar { height: 4px; }
+.hp-releases__grid::-webkit-scrollbar { height: 8px; }
 .hp-releases__grid::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.03); border-radius: 10px; }
 .hp-releases__grid::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; transition: background 0.3s; }
 .hp-releases__grid:hover::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); }

@@ -30,6 +30,9 @@ export default function DecryptedText({
     parentClassName = '',
     encryptedClassName = '',
     animateOn = 'hover',
+    loop = false,
+    loopDelay = 3000,
+    initialDelay = 0,
     ...props
 }) {
     const [displayText, setDisplayText] = useState(text);
@@ -37,7 +40,9 @@ export default function DecryptedText({
     const [isScrambling, setIsScrambling] = useState(false);
     const [revealedIndices, setRevealedIndices] = useState(new Set());
     const [hasAnimated, setHasAnimated] = useState(false);
+    const [loopTrigger, setLoopTrigger] = useState(0);
     const containerRef = useRef(null);
+
 
     useEffect(() => {
         let interval;
@@ -123,6 +128,12 @@ export default function DecryptedText({
                         } else {
                             clearInterval(interval);
                             setIsScrambling(false);
+                            if (loop) {
+                                setTimeout(() => {
+                                    setRevealedIndices(new Set());
+                                    setLoopTrigger(prev => prev + 1);
+                                }, loopDelay);
+                            }
                             return prevRevealed;
                         }
                     } else {
@@ -132,6 +143,12 @@ export default function DecryptedText({
                             clearInterval(interval);
                             setIsScrambling(false);
                             setDisplayText(text);
+                            if (loop) {
+                                setTimeout(() => {
+                                    setRevealedIndices(new Set());
+                                    setLoopTrigger(prev => prev + 1);
+                                }, loopDelay);
+                            }
                         }
                         return prevRevealed;
                     }
@@ -146,7 +163,7 @@ export default function DecryptedText({
         return () => {
             if (interval) clearInterval(interval);
         };
-    }, [isHovering, text, speed, maxIterations, sequential, revealDirection, characters, useOriginalCharsOnly]);
+    }, [isHovering, text, speed, maxIterations, sequential, revealDirection, characters, useOriginalCharsOnly, loop, loopDelay, loopTrigger]);
 
     useEffect(() => {
         if (animateOn !== 'view' && animateOn !== 'both') return;
@@ -154,8 +171,10 @@ export default function DecryptedText({
         const observerCallback = entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting && !hasAnimated) {
-                    setIsHovering(true);
-                    setHasAnimated(true);
+                    setTimeout(() => {
+                        setIsHovering(true);
+                        setHasAnimated(true);
+                    }, initialDelay);
                 }
             });
         };
@@ -177,7 +196,7 @@ export default function DecryptedText({
                 observer.unobserve(currentRef);
             }
         };
-    }, [animateOn, hasAnimated]);
+    }, [animateOn, hasAnimated, initialDelay]);
 
     const hoverProps =
         animateOn === 'hover' || animateOn === 'both'

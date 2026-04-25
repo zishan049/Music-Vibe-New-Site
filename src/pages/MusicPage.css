@@ -10,11 +10,72 @@
 .music-hero {
     min-height: 50vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 120px 24px 60px;
+    padding: 120px 0 0;
     text-align: center;
+    position: relative;
 }
+
+.music-hero-content {
+    padding: 0 24px 60px;
+}
+
+/* ── Marquee Divider ────────────────────────────────── */
+.music-marquee {
+    width: 100%;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 13px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    z-index: 1;
+    content-visibility: auto;
+}
+
+.music-marquee__track {
+    display: inline-flex;
+    animation: music-marquee-scroll 24s linear infinite;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+
+@keyframes music-marquee-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+.music-marquee__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 28px;
+    font-family: var(--font);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    color: rgba(255, 255, 255, 0.28);
+    text-transform: uppercase;
+}
+
+.music-marquee__dot {
+    display: inline-block;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    flex-shrink: 0;
+}
+
 
 .music-hero h1 {
     font-family: var(--font-display);

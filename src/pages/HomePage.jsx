@@ -5,7 +5,10 @@ import { supabase } from '../lib/supabase'
 import SocialLinks from '../components/SocialLinks/SocialLinks'
 import LogoLoop from '../components/LogoLoop/LogoLoop'
 import Footer from '../components/Footer/Footer'
+import DecryptedText from '../components/DecryptedText/DecryptedText'
 import ScrollReveal from '../components/ScrollReveal/ScrollReveal'
+import { SOCIAL_ICONS, SOCIAL_LABELS } from '../data/socialIcons'
+import socialsData from '../data/socials.json'
 import './HomePage.css'
 
 /* ── Marquee items ────────────────────────────────── */
@@ -21,6 +24,38 @@ const STATS = [
     { label: 'Since', value: '2024', sub: 'Based in India' },
     { label: 'Available On', value: '6+', sub: 'Streaming Platforms' },
 ]
+
+/* ── Logo Blinker ─────────────────────────────────── */
+const LOGO_BLINKER_ITEMS = ['spotify', 'apple', 'amazon', 'instagram', 'soundcloud', 'youtube', 'featurefm'];
+
+function LogoBlinker() {
+    const [index, setIndex] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setIndex((prev) => (prev + 1) % LOGO_BLINKER_ITEMS.length);
+        }, 1200); // Snappier cycle without blinking
+        return () => clearInterval(timer);
+    }, []);
+
+    return (
+        <span className="hp-cta__blinker hp-cta__blinker--logo">
+            <AnimatePresence mode="wait">
+                <motion.span
+                    key={LOGO_BLINKER_ITEMS[index]}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    className={`hp-cta__logo-unit ${LOGO_BLINKER_ITEMS[index]}`}
+                    style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}
+                >
+                    {SOCIAL_ICONS[LOGO_BLINKER_ITEMS[index]]}
+                </motion.span>
+            </AnimatePresence>
+        </span>
+    );
+}
 
 /* ── Word-split hero animation ────────────────────── */
 function HeroWord({ word, delay }) {
@@ -186,13 +221,37 @@ export default function HomePage() {
                     >
                         <p className="hp-hero__tagline">
                             <span className="hp-hero__tagline-line hp-hero__tagline-line--strong">
-                                Some days calm and dreamy,
+                                <DecryptedText 
+                                    text="Some days calm and dreamy," 
+                                    animateOn="view" 
+                                    initialDelay={1800} 
+                                    sequential={true} 
+                                    speed={25} 
+                                    loop={true} 
+                                    loopDelay={5000} 
+                                />
                             </span>
                             <span className="hp-hero__tagline-line">
-                                some days heavy and loud.
+                                <DecryptedText 
+                                    text="some days heavy and loud." 
+                                    animateOn="view" 
+                                    initialDelay={2000} 
+                                    sequential={true} 
+                                    speed={15} 
+                                    loop={true} 
+                                    loopDelay={6000} 
+                                />
                             </span>
                             <span className="hp-hero__tagline-line hp-hero__tagline-line--accent">
-                                Music that moves with you.
+                                <DecryptedText 
+                                    text="Music that moves with you." 
+                                    animateOn="view" 
+                                    initialDelay={2200} 
+                                    sequential={true} 
+                                    speed={25} 
+                                    loop={true} 
+                                    loopDelay={5000} 
+                                />
                             </span>
                         </p>
                     </motion.div>
@@ -223,7 +282,7 @@ export default function HomePage() {
                         >
                             <Link to="/music" className="hp-cta">
                                 <span>Listen Now</span>
-                                <span className="hp-cta__arrow">→</span>
+                                <LogoBlinker />
                             </Link>
                         </motion.div>
                     </div>
@@ -360,8 +419,6 @@ export default function HomePage() {
    Mirrors LoadingSequencer Phase 1 pill animation:
    each pill slides up from Y+20 + fades in, staggered
    ─────────────────────────────────────────────────── */
-import { SOCIAL_ICONS, SOCIAL_LABELS } from '../data/socialIcons'
-import socialsData from '../data/socials.json'
 
 const pillVariant = {
     hidden: {
@@ -394,8 +451,9 @@ function SocialLinksAnimated() {
                     rel="noopener noreferrer"
                     variants={pillVariant}
                     whileHover={{
-                        y: -3,
-                        transition: { duration: 0.25, ease: [0.34, 1.56, 0.64, 1] }
+                        y: -4,
+                        scale: 1.02,
+                        transition: { duration: 0.15, ease: [0.23, 1, 0.32, 1] }
                     }}
                 >
                     {SOCIAL_ICONS[key] || SOCIAL_ICONS.link}

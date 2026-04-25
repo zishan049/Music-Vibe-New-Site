@@ -7,6 +7,13 @@ import GlitchText from '../components/GlitchText/GlitchText'
 import ScrollReveal from '../components/ScrollReveal/ScrollReveal'
 import './MusicPage.css'
 
+/* ── Marquee items ────────────────────────────────── */
+const MARQUEE_ITEMS = [
+    'Music Vibe', 'Emotions in Motion', 'Independent Artist',
+    'Original Releases', 'Streaming Now', 'Music Vibe',
+    'Emotions in Motion', 'Independent Artist', 'Original Releases', 'Streaming Now',
+]
+
 export default function MusicPage() {
     useEffect(() => {
         document.title = 'Music | Music Vibe'
@@ -95,6 +102,18 @@ export default function MusicPage() {
                             <div className="glow-bar" />
                         </div>
                     </ScrollReveal>
+
+                    {/* Streaming Now Marquee — Ported from HomePage */}
+                    <div className="music-marquee" aria-hidden="true">
+                        <div className="music-marquee__track">
+                            {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
+                                <span key={i} className="music-marquee__item">
+                                    {item}
+                                    <span className="music-marquee__dot" />
+                                </span>
+                            ))}
+                        </div>
+                    </div>
                 </section>
 
                 {/* ── Gallery ──────────────────────────────── */}
