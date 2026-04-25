@@ -14,6 +14,21 @@ const MARQUEE_ITEMS = [
     'Emotions in Motion', 'Independent Artist', 'Original Releases', 'Streaming Now',
 ]
 
+const SmoothImage = ({ src, alt, className, i, ...props }) => {
+    const [isLoaded, setIsLoaded] = useState(false);
+    return (
+        <img
+            src={src}
+            alt={alt}
+            className={`${className} ${isLoaded ? 'is-loaded' : 'is-loading'}`}
+            onLoad={() => setIsLoaded(true)}
+            loading={i < 4 ? 'eager' : 'lazy'}
+            fetchPriority={i < 4 ? 'high' : 'auto'}
+            {...props}
+        />
+    );
+};
+
 export default function MusicPage() {
     useEffect(() => {
         document.title = 'Music | Music Vibe'
@@ -86,6 +101,7 @@ export default function MusicPage() {
 
 
 
+
     return (
         <div className="music-root">
             <main className="music-main">
@@ -117,19 +133,13 @@ export default function MusicPage() {
                 </section>
 
                 {/* ── Gallery ──────────────────────────────── */}
-                <section className="art-gallery-section section-optimize">
-                    <div id="art-gallery" className="art-gallery-grid">
+                <section className={`art-gallery-section section-optimize ${!loading ? 'is-ready' : 'is-loading'}`}>
+                    <div id="art-gallery" className={`art-gallery-grid ${!loading ? 'is-visible' : ''}`}>
                         {tracks.map((track, i) => {
                             const accent = track.accent_color
                             const glowColor = accent
                                 ? `hsla(${accent.hue}, ${accent.sat}%, 60%, 0.6)`
                                 : 'rgba(255, 255, 255, 0.4)'
-                            const glitchAfter = accent
-                                ? `hsl(${(accent.hue + 30) % 360}, ${accent.sat}%, 55%)`
-                                : 'red'
-                            const glitchBefore = accent
-                                ? `hsl(${(accent.hue + 180) % 360}, ${accent.sat}%, 55%)`
-                                : 'cyan'
 
                             return (
                                 <ScrollReveal
@@ -150,12 +160,11 @@ export default function MusicPage() {
                                         onMouseLeave={() => setHoveredColor(null)}
                                     >
                                         <div className="art-card-inner">
-                                            <img
+                                            <SmoothImage
                                                 src={getArtworkUrl(track.artwork)}
                                                 alt={`${track.title} artwork`}
                                                 className="art-card-image"
-                                                loading={i < 4 ? 'eager' : 'lazy'}
-                                                fetchPriority={i < 4 ? 'high' : 'auto'}
+                                                i={i}
                                                 onError={(e) => {
                                                     // Fallback to local if Supabase fails (useful during migration)
                                                     if (!e.target.src.includes('/Assets/Artwork/')) {
@@ -164,9 +173,7 @@ export default function MusicPage() {
                                                 }}
                                             />
                                             <div className="art-card-overlay">
-                                                <GlitchText speed={1.2} enableShadows={true} enableOnHover={false} className="art-card-title" afterColor={glitchAfter} beforeColor={glitchBefore}>
-                                                    {track.title}
-                                                </GlitchText>
+                                                <h3 className="art-card-title">{track.title}</h3>
                                                 <div className="art-card-meta">
                                                     <span className="art-card-type">{track.type}</span>
                                                     <span className="art-card-year">{track.year}</span>

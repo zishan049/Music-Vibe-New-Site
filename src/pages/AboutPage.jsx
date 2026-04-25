@@ -67,6 +67,21 @@ export default function AboutPage() {
                             </article>
                         </ScrollReveal>
                     </div>
+
+                    {/* ── The Story (Coming Soon) ─────────────────── */}
+                    <div className="about-story-wrap">
+                        <ScrollReveal delay={0.3}>
+                            <article className="about-card story-card gpu-accelerate">
+                                <div className="about-card-icon">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.1-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-3.45.3-5 1V7c1.55-.7 3.3-1 5-1 1.2 0 2.4.15 3.5.5v11z" />
+                                    </svg>
+                                </div>
+                                <h2>The Story</h2>
+                                <p>Coming Soon...</p>
+                            </article>
+                        </ScrollReveal>
+                    </div>
                 </section>
 
                 {/* ── Social Links Section ──────────────────────── */}
@@ -82,7 +97,7 @@ export default function AboutPage() {
                     <ScrollReveal delay={0.1}>
                         <h2>Get in Touch</h2>
                         <p>For bookings, collaborations, or just to say hi.</p>
-                        <a href="https://discord.gg/PJXdZtDMKF" className="cta">CONTACT ME</a>
+                        <a href="https://www.instagram.com/musicvibe725/" className="cta">CONTACT ME</a>
                     </ScrollReveal>
                 </section>
             </main>
