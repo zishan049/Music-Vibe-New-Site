@@ -5,3 +5,4 @@ node_modules/
 admin/
 .env
 ignorethis
+DESIGN.md
