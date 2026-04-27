@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import friendsData from '../data/friends.json'
 import ProfileCard from '../components/ProfileCard/ProfileCard'
 import DecryptedText from '../components/DecryptedText/DecryptedText'
 import LogoLoop from '../components/LogoLoop/LogoLoop'
@@ -20,72 +20,22 @@ export default function FriendsPage() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        async function fetchFriends() {
-            try {
-                const { data, error } = await supabase
-                    .from('friends')
-                    .select('*')
-                    .order('name', { ascending: true })
-
-                if (error) throw error
-
-                // Generate public URLs for images
-                const friendsWithUrls = data.map(friend => {
-                    const avatarUrl = supabase.storage
-                        .from('friends')
-                        .getPublicUrl(friend.avatar_url).data.publicUrl
-
-                    const imageUrl = supabase.storage
-                        .from('friends')
-                        .getPublicUrl(friend.image_url).data.publicUrl
-
-                    return {
-                        ...friend,
-                        avatarUrl,
-                        image: imageUrl
-                    }
-                })
-
-                setFriends(friendsWithUrls)
-            } catch (err) {
-                console.error('Error fetching friends:', err)
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        fetchFriends()
-
-        // Subscribe to real-time changes
-        const channel = supabase
-            .channel('friends-realtime')
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'friends' },
-                () => {
-                    fetchFriends()
-                }
-            )
-            .subscribe()
-
-        return () => {
-            supabase.removeChannel(channel)
-        }
+        // Map local data to include correct URLs
+        const friendsWithUrls = friendsData.map(friend => ({
+            ...friend,
+            avatarUrl: `/Assets/Friends/${friend.avatar_url}`,
+            image: `/Assets/Friends/${friend.image_url}`
+        }))
+        setFriends(friendsWithUrls)
+        setLoading(false)
     }, [])
 
-    // Completely disable right-click, drag, text selection, and middle-click on this page
+    // Extra protection for Friends page to prevent scraping/unauthorized use
     useEffect(() => {
         const block = (e) => e.preventDefault();
-        const blockMouse = (e) => { if (e.button === 1 || e.button === 2) e.preventDefault(); };
-        document.addEventListener('contextmenu', block);
-        document.addEventListener('dragstart', block);
         document.addEventListener('selectstart', block);
-        document.addEventListener('mousedown', blockMouse);
         return () => {
-            document.removeEventListener('contextmenu', block);
-            document.removeEventListener('dragstart', block);
             document.removeEventListener('selectstart', block);
-            document.removeEventListener('mousedown', blockMouse);
         };
     }, []);
 

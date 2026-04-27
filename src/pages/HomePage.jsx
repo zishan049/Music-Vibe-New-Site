@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'motion/react'
-import { supabase } from '../lib/supabase'
+import tracksData from '../data/tracks.json'
 import SocialLinks from '../components/SocialLinks/SocialLinks'
 import LogoLoop from '../components/LogoLoop/LogoLoop'
 import Footer from '../components/Footer/Footer'
@@ -90,11 +90,6 @@ function ReleaseCard({ track, index, getArtworkUrl }) {
                     src={getArtworkUrl(track.artwork)}
                     alt={track.title}
                     loading="lazy"
-                    onError={(e) => {
-                        if (!e.target.src.includes('/Assets/Artwork/')) {
-                            e.target.src = `/Assets/Artwork/${track.artwork}`
-                        }
-                    }}
                 />
                 {track.status === 'Upcoming' && (
                     <span className="hp-release-card__upcoming">Upcoming</span>
@@ -127,29 +122,9 @@ export default function HomePage() {
     const [tracks, setTracks] = useState([])
     const heroRef = useRef(null)
 
-    /* ── Supabase fetch + realtime ────────────────── */
+    /* ── Local fetch ────────────────── */
     useEffect(() => {
-        const fetchTracks = async () => {
-            try {
-                const { data, error } = await supabase
-                    .from('tracks')
-                    .select('*')
-                    .order('created_at', { ascending: false })
-                if (error) throw error
-                setTracks(data || [])
-            } catch (err) {
-                console.error('Error fetching tracks:', err)
-            }
-        }
-
-        fetchTracks()
-
-        const channel = supabase
-            .channel('homepage-tracks-realtime')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'tracks' }, fetchTracks)
-            .subscribe()
-
-        return () => supabase.removeChannel(channel)
+        setTracks(tracksData)
     }, [])
 
     useEffect(() => {
@@ -177,8 +152,7 @@ export default function HomePage() {
 
     /* ── Artwork URL helper ───────────────────────── */
     const getArtworkUrl = (filename) => {
-        const { data } = supabase.storage.from('artwork').getPublicUrl(filename)
-        return data.publicUrl
+        return `/Assets/Artwork/${filename}`
     }
 
     return (
@@ -378,7 +352,7 @@ export default function HomePage() {
                     <div className="hp-releases__grid">
                         {tracks.map((track, i) => (
                             <ScrollReveal 
-                                key={track.id} 
+                                key={track.id || i} 
                                 revealType="blur" 
                                 delay={i * 0.06}
                                 distance={50}

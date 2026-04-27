@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { motion } from 'motion/react';
 
 /**
@@ -24,7 +25,7 @@ export default function ScrollReveal({
     revealType = 'slide',
     ...props
 }) {
-    const getInitialProps = () => {
+    const initialProps = useMemo(() => {
         const initial = { opacity: 0 };
         
         if (revealType === 'blur') {
@@ -50,9 +51,9 @@ export default function ScrollReveal({
         }
         
         return initial;
-    };
+    }, [revealType, direction, distance]);
 
-    const getAnimateProps = () => {
+    const animateProps = useMemo(() => {
         const animate = { opacity: 1 };
         
         if (revealType === 'blur') {
@@ -76,13 +77,13 @@ export default function ScrollReveal({
         }
         
         return animate;
-    };
+    }, [revealType, direction]);
 
     return (
         <motion.div
             className={className}
-            initial={getInitialProps()}
-            whileInView={getAnimateProps()}
+            initial={initialProps}
+            whileInView={animateProps}
             viewport={{ once, margin: '-60px' }}
             transition={{
                 duration,

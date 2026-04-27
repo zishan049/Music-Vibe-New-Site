@@ -7,10 +7,18 @@
   <title>Music Vibe</title>
   <meta name="description" content="Independent artist exploring ambient, electronic, and experimental soundscapes. Music that moves with you." />
   <link rel="icon" type="image/png" href="/Assets/musicvibe.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Preload Critical Fonts -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&family=Syne:wght@700;800&display=swap" as="style">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Preload App Entry -->
+  <link rel="modulepreload" href="/src/main.jsx">
 </head>
 <body>
   <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
+  <script type="module" src="/src/main.jsx" fetchpriority="high"></script>
 </body>
 </html>

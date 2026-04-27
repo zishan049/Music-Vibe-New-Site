@@ -1,72 +1,78 @@
 [
     {
+        "id": "1",
         "title": "Dark",
-        "artwork": "Dark.jpg",
+        "artwork": "Dark.webp",
         "link": "https://ffm.to/-dark",
         "year": "2025",
         "type": "Single",
         "status": "Released",
-        "accentColor": {
+        "accent_color": {
             "hue": 0,
             "sat": 80
         }
     },
     {
+        "id": "2",
         "title": "Rainy Chords",
-        "artwork": "RainyChords.jpg",
+        "artwork": "RainyChords.webp",
         "link": "https://ffm.to/rainychords",
         "year": "2025",
         "type": "Single",
         "status": "Released",
-        "accentColor": {
+        "accent_color": {
             "hue": 35,
             "sat": 90
         }
     },
     {
+        "id": "3",
         "title": "Resurrection",
-        "artwork": "Resurrection.png",
+        "artwork": "Resurrection.webp",
         "link": "https://ffm.to/wx0yao",
         "year": "2025",
         "type": "Single",
         "status": "Released",
-        "accentColor": {
+        "accent_color": {
             "hue": 210,
             "sat": 100
         }
     },
     {
+        "id": "4",
         "title": "K",
-        "artwork": "k.jpg",
+        "artwork": "k.webp",
         "link": "https://ffm.to/-K",
         "year": "2026",
         "type": "Single",
         "status": "Released",
-        "accentColor": {
+        "accent_color": {
             "hue": 340,
             "sat": 85
         }
     },
     {
+        "id": "5",
         "title": "Stareya",
-        "artwork": "Stareya.png",
+        "artwork": "Stareya.webp",
         "link": "https://ffm.to/epstareya",
         "year": "2026",
         "type": "EP",
         "status": "Released",
-        "accentColor": {
+        "accent_color": {
             "hue": 200,
             "sat": 60
         }
     },
     {
+        "id": "6",
         "title": "With U",
-        "artwork": "With U.png",
+        "artwork": "With U.webp",
         "link": "https://ffm.to/wu",
         "year": "2026",
         "type": "Single",
         "status": "Released",
-        "accentColor": {
+        "accent_color": {
             "hue": 300,
             "sat": 80
         }

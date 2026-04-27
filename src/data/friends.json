@@ -1,0 +1,52 @@
+[
+    {
+        "id": "1",
+        "name": "Alex",
+        "handle": "@alex",
+        "title": "Singer & Songwriter",
+        "status": "Online",
+        "avatar_url": "Alex.webp",
+        "image_url": "AlexBackgrounnd.webp",
+        "site_url": "https://prince-alex.com"
+    },
+    {
+        "id": "2",
+        "name": "Cyu",
+        "handle": "@cyu",
+        "title": "Singer",
+        "status": "Singing",
+        "avatar_url": "Cyu.webp",
+        "image_url": "CyuBackground.webp",
+        "site_url": "https://cyuuneia.com"
+    },
+    {
+        "id": "3",
+        "name": "Potassium",
+        "handle": "@potassium",
+        "title": "Singer",
+        "status": "Singing",
+        "avatar_url": "Potassium.webp",
+        "image_url": "PotassiumBackground.webp",
+        "site_url": ""
+    },
+    {
+        "id": "5",
+        "name": "Toothless",
+        "handle": "@toothless",
+        "title": "Singer & Artist",
+        "status": "Singing",
+        "avatar_url": "Toothless.webp",
+        "image_url": "Toothless.webp",
+        "site_url": ""
+    },
+    {
+        "id": "6",
+        "name": "Ɍ4Vè ✗",
+        "handle": "@rave",
+        "title": "Music Producer",
+        "status": "Making Bangers",
+        "avatar_url": "Ɍ4Vè ✗.webp",
+        "image_url": "Ɍ4VèBackground.webp",
+        "site_url": "https://zoundznation.onrender.com"
+    }
+]

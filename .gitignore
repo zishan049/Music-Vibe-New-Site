@@ -6,3 +6,4 @@ admin/
 .env
 ignorethis
 DESIGN.md
+dist

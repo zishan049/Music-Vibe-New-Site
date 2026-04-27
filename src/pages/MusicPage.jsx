@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import tracksData from '../data/tracks.json'
 import LogoLoop from '../components/LogoLoop/LogoLoop'
 import Footer from '../components/Footer/Footer'
 import DecryptedText from '../components/DecryptedText/DecryptedText'
@@ -43,39 +43,9 @@ export default function MusicPage() {
     const [, setHoveredColor] = useState(null)
 
     useEffect(() => {
-        const fetchTracks = async () => {
-            try {
-                const { data, error } = await supabase
-                    .from('tracks')
-                    .select('*')
-                    .order('created_at', { ascending: false })
-                
-                if (error) throw error
-                setTracks(data || [])
-            } catch (err) {
-                console.error('Error fetching tracks:', err)
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        fetchTracks()
-
-        // Subscribe to real-time changes
-        const channel = supabase
-            .channel('tracks-realtime')
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'tracks' },
-                () => {
-                    fetchTracks()
-                }
-            )
-            .subscribe()
-
-        return () => {
-            supabase.removeChannel(channel)
-        }
+        // Use local data instead of Supabase
+        setTracks(tracksData)
+        setLoading(false)
     }, [])
 
     // Completely disable right-click, drag, text selection, and middle-click on this page
@@ -95,12 +65,8 @@ export default function MusicPage() {
     }, []);
 
     const getArtworkUrl = (filename) => {
-        const { data } = supabase.storage.from('artwork').getPublicUrl(filename)
-        return data.publicUrl
+        return `/Assets/Artwork/${filename}`
     }
-
-
-
 
     return (
         <div className="music-root">
@@ -143,7 +109,7 @@ export default function MusicPage() {
 
                             return (
                                 <ScrollReveal
-                                    key={track.id}
+                                    key={track.id || i}
                                     delay={(i % 4) * 0.1} // Modulo to reset stagger timing per row
                                     distance={25}
                                 >
@@ -165,12 +131,6 @@ export default function MusicPage() {
                                                 alt={`${track.title} artwork`}
                                                 className="art-card-image"
                                                 i={i}
-                                                onError={(e) => {
-                                                    // Fallback to local if Supabase fails (useful during migration)
-                                                    if (!e.target.src.includes('/Assets/Artwork/')) {
-                                                        e.target.src = `/Assets/Artwork/${track.artwork}`
-                                                    }
-                                                }}
                                             />
                                             <div className="art-card-overlay">
                                                 <h3 className="art-card-title">{track.title}</h3>
