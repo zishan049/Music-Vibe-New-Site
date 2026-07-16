@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { supabase, getStorageUrl } from '../lib/supabase'
 import friendsData from '../data/friends.json'
 import ProfileCard from '../components/ProfileCard/ProfileCard'
 import DecryptedText from '../components/DecryptedText/DecryptedText'
@@ -20,14 +21,36 @@ export default function FriendsPage() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        // Map local data to include correct URLs
-        const friendsWithUrls = friendsData.map(friend => ({
-            ...friend,
-            avatarUrl: `/Assets/Friends/${friend.avatar_url}`,
-            image: `/Assets/Friends/${friend.image_url}`
-        }))
-        setFriends(friendsWithUrls)
-        setLoading(false)
+        async function fetchFriends() {
+            const { data, error } = await supabase
+                .from('friends')
+                .select('*')
+                .order('id')
+
+            const source = (error || !data?.length) ? friendsData : data
+
+            setFriends(source.map(friend => ({
+                ...friend,
+                avatarUrl: getStorageUrl('friends', friend.avatar_url),
+                image: getStorageUrl('friends', friend.image_url)
+            })))
+            setLoading(false)
+        }
+
+        fetchFriends()
+
+        const onVisible = () => { if (document.visibilityState === 'visible') fetchFriends() }
+        document.addEventListener('visibilitychange', onVisible)
+
+        const channel = supabase
+            .channel('friends-data')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'friends' }, fetchFriends)
+            .subscribe()
+
+        return () => {
+            document.removeEventListener('visibilitychange', onVisible)
+            supabase.removeChannel(channel)
+        }
     }, [])
 
     // Extra protection for Friends page to prevent scraping/unauthorized use

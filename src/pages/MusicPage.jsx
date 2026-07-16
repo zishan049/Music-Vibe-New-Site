@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { supabase, getStorageUrl } from '../lib/supabase'
 import tracksData from '../data/tracks.json'
 import LogoLoop from '../components/LogoLoop/LogoLoop'
 import Footer from '../components/Footer/Footer'
@@ -43,9 +44,41 @@ export default function MusicPage() {
     const [, setHoveredColor] = useState(null)
 
     useEffect(() => {
-        // Use local data instead of Supabase
-        setTracks(tracksData)
-        setLoading(false)
+        async function fetchTracks() {
+            const { data, error } = await supabase
+                .from('tracks')
+                .select('*')
+                .order('id')
+
+            if (error || !data?.length) {
+                setTracks(tracksData)
+            } else {
+                setTracks(data.map(t => ({
+                    ...t,
+                    accent_color: (t.accent_hue != null)
+                        ? { hue: t.accent_hue, sat: t.accent_sat }
+                        : null
+                })))
+            }
+            setLoading(false)
+        }
+
+        fetchTracks()
+
+        // Re-fetch when tab becomes visible (user switches back from admin)
+        const onVisible = () => { if (document.visibilityState === 'visible') fetchTracks() }
+        document.addEventListener('visibilitychange', onVisible)
+
+        // Also subscribe to Supabase Realtime (requires publication setup in Supabase)
+        const channel = supabase
+            .channel('music-tracks')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'tracks' }, fetchTracks)
+            .subscribe()
+
+        return () => {
+            document.removeEventListener('visibilitychange', onVisible)
+            supabase.removeChannel(channel)
+        }
     }, [])
 
     // Completely disable right-click, drag, text selection, and middle-click on this page
@@ -64,9 +97,7 @@ export default function MusicPage() {
         };
     }, []);
 
-    const getArtworkUrl = (filename) => {
-        return `/Assets/Artwork/${filename}`
-    }
+    const getArtworkUrl = (filename) => getStorageUrl('artwork', filename)
 
     return (
         <div className="music-root">

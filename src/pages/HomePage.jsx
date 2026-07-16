@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'motion/react'
+import { supabase, getStorageUrl } from '../lib/supabase'
 import tracksData from '../data/tracks.json'
+import socialsDataFallback from '../data/socials.json'
 import SocialLinks from '../components/SocialLinks/SocialLinks'
 import LogoLoop from '../components/LogoLoop/LogoLoop'
 import Footer from '../components/Footer/Footer'
 import DecryptedText from '../components/DecryptedText/DecryptedText'
 import ScrollReveal from '../components/ScrollReveal/ScrollReveal'
 import { SOCIAL_ICONS, SOCIAL_LABELS } from '../data/socialIcons'
-import socialsData from '../data/socials.json'
 import './HomePage.css'
 
 /* ── Marquee items ────────────────────────────────── */
@@ -120,11 +121,70 @@ function ReleaseCard({ track, index, getArtworkUrl }) {
    ═══════════════════════════════════════════════════ */
 export default function HomePage() {
     const [tracks, setTracks] = useState([])
+    const [socialsData, setSocialsData] = useState(socialsDataFallback)
     const heroRef = useRef(null)
 
-    /* ── Local fetch ────────────────── */
+    /* ── Supabase fetches ────────────────── */
     useEffect(() => {
-        setTracks(tracksData)
+        async function fetchTracks() {
+            const { data, error } = await supabase
+                .from('tracks')
+                .select('*')
+                .order('id')
+
+            if (!error && data?.length) {
+                setTracks(data.map(t => ({
+                    ...t,
+                    accent_color: (t.accent_hue != null)
+                        ? { hue: t.accent_hue, sat: t.accent_sat }
+                        : null
+                })))
+            } else {
+                setTracks(tracksData)
+            }
+        }
+
+        async function fetchSocials() {
+            const { data, error } = await supabase
+                .from('socials')
+                .select('platform, url')
+
+            if (!error && data?.length) {
+                const obj = {}
+                data.forEach(({ platform, url }) => { obj[platform] = url })
+                setSocialsData(obj)
+            }
+            // on error: keep socialsDataFallback already in state
+        }
+
+        fetchTracks()
+        fetchSocials()
+
+        // Re-fetch when tab becomes visible (user switches back from admin)
+        const onVisible = () => {
+            if (document.visibilityState === 'visible') {
+                fetchTracks()
+                fetchSocials()
+            }
+        }
+        document.addEventListener('visibilitychange', onVisible)
+
+        // Also subscribe to Supabase Realtime
+        const tracksCh = supabase
+            .channel('hp-tracks')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'tracks' }, fetchTracks)
+            .subscribe()
+
+        const socialsCh = supabase
+            .channel('hp-socials')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'socials' }, fetchSocials)
+            .subscribe()
+
+        return () => {
+            document.removeEventListener('visibilitychange', onVisible)
+            supabase.removeChannel(tracksCh)
+            supabase.removeChannel(socialsCh)
+        }
     }, [])
 
     useEffect(() => {
@@ -150,10 +210,7 @@ export default function HomePage() {
     const rawStrokeY = useTransform(scrollYProgress, [0, 1], [0, -55])
     const strokeY = useSpring(rawStrokeY, { stiffness: 55, damping: 18 })
 
-    /* ── Artwork URL helper ───────────────────────── */
-    const getArtworkUrl = (filename) => {
-        return `/Assets/Artwork/${filename}`
-    }
+    const getArtworkUrl = (filename) => getStorageUrl('artwork', filename)
 
     return (
         <div id="home-content" className="hp-root">
@@ -244,7 +301,7 @@ export default function HomePage() {
                                     visible: { transition: { staggerChildren: 0.09, delayChildren: 1.1 } }
                                 }}
                             >
-                                <SocialLinksAnimated />
+                                <SocialLinksAnimated socials={socialsData} />
                             </motion.div>
                         </div>
 
@@ -411,8 +468,8 @@ const pillVariant = {
     },
 }
 
-function SocialLinksAnimated() {
-    const activeSocials = Object.entries(socialsData).filter(([, url]) => url)
+function SocialLinksAnimated({ socials }) {
+    const activeSocials = Object.entries(socials).filter(([, url]) => url)
 
     return (
         <div className="artist-social-links hp-hero__social">
