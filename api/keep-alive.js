@@ -75,7 +75,7 @@ export default async function handler(req, res) {
 
   const latency_ms = Date.now() - start
   const timestamp  = new Date().toISOString()
-  const source     = req.headers['x-vercel-cron'] ? 'vercel-cron' : 'manual'
+  const source     = req.headers['x-vercel-cron'] ? 'auto' : 'manual'
 
   console.log(`[keep-alive] ${timestamp} | status: ${httpStatus} | latency: ${latency_ms}ms | alive: ${alive} | source: ${source} | key: ${keySource}`)
 
