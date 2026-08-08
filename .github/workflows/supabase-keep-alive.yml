@@ -12,63 +12,69 @@ jobs:
 
     steps:
       - name: Ping and Log
+        shell: python
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          SUPABASE_URL="${{ secrets.SUPABASE_URL }}"
-          SUPABASE_KEY="${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
+          import urllib.request
+          import json
+          import time
+          import os
 
-          echo "🔍 Pinging Supabase..."
-          START=$(date +%s%N)
+          url = os.environ["SUPABASE_URL"]
+          key = os.environ["SUPABASE_KEY"]
 
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            --max-time 15 \
-            -H "apikey: ${SUPABASE_KEY}" \
-            -H "Authorization: Bearer ${SUPABASE_KEY}" \
-            "${SUPABASE_URL}/rest/v1/")
+          headers = {
+              "apikey": key,
+              "Authorization": f"Bearer {key}",
+              "Content-Type": "application/json",
+          }
 
-          END=$(date +%s%N)
-          LATENCY=$(( (END - START) / 1000000 ))
+          # ── Ping Supabase ──
+          print("🔍 Pinging Supabase...")
+          start = time.time()
+          try:
+              req = urllib.request.Request(f"{url}/rest/v1/", headers=headers)
+              with urllib.request.urlopen(req, timeout=15) as resp:
+                  status = resp.status
+          except urllib.error.HTTPError as e:
+              status = e.code
+          except Exception as e:
+              status = 0
+              print(f"❌ Error: {e}")
 
-          if [ "$HTTP_STATUS" = "200" ]; then
-            ALIVE=true
-            echo "✅ Supabase responded | status: $HTTP_STATUS | latency: ${LATENCY}ms"
-          else
-            ALIVE=false
-            echo "❌ Ping failed | status: $HTTP_STATUS | latency: ${LATENCY}ms"
-          fi
+          latency = int((time.time() - start) * 1000)
+          alive = status == 200
 
-          # Build JSON with jq (guaranteed valid)
-          PAYLOAD=$(jq -n \
-            --argjson status "$HTTP_STATUS" \
-            --argjson alive "$ALIVE" \
-            --argjson latency "$LATENCY" \
-            --arg source "auto" \
-            '{status: $status, alive: $alive, latency_ms: $latency, source: $source}')
+          print(f"{'✅' if alive else '❌'} Status: {status} | Latency: {latency}ms")
 
-          echo "📦 Payload: $PAYLOAD"
+          # ── Log to ping_log ──
+          payload = json.dumps({
+              "status": status,
+              "alive": alive,
+              "latency_ms": latency,
+              "source": "auto"
+          })
 
-          echo "📝 Writing to ping_log..."
-          LOG_BODY=$(curl -s \
-            -X POST \
-            -H "apikey: ${SUPABASE_KEY}" \
-            -H "Authorization: Bearer ${SUPABASE_KEY}" \
-            -H "Content-Type: application/json" \
-            -H "Prefer: return=representation" \
-            -d "${PAYLOAD}" \
-            -w "\n%{http_code}" \
-            "${SUPABASE_URL}/rest/v1/ping_log")
+          print(f"📦 Payload: {payload}")
+          print("📝 Writing to ping_log...")
 
-          HTTP_LOG=$(echo "$LOG_BODY" | tail -1)
-          RESPONSE=$(echo "$LOG_BODY" | head -n -1)
+          try:
+              req = urllib.request.Request(
+                  f"{url}/rest/v1/ping_log",
+                  data=payload.encode("utf-8"),
+                  headers={**headers, "Prefer": "return=representation"},
+                  method="POST",
+              )
+              with urllib.request.urlopen(req, timeout=15) as resp:
+                  body = resp.read().decode("utf-8")
+                  print(f"✅ Logged! Response: {body}")
+          except urllib.error.HTTPError as e:
+              body = e.read().decode("utf-8")
+              print(f"❌ Log failed: HTTP {e.code} — {body}")
+          except Exception as e:
+              print(f"❌ Log error: {e}")
 
-          echo "📬 HTTP: $HTTP_LOG"
-          echo "📬 Body: $RESPONSE"
-
-          if [ "$HTTP_LOG" = "201" ]; then
-            echo "✅ Logged with source=auto"
-          else
-            echo "❌ Log failed with HTTP $HTTP_LOG"
-          fi
-
-          if [ "$ALIVE" = "false" ]; then
-            exit 1
-          fi
+          if not alive:
+              raise SystemExit(1)
