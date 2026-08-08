@@ -11,58 +11,69 @@ jobs:
     timeout-minutes: 2
 
     steps:
-      - name: Ping Supabase
+      - name: Ping and Log
         run: |
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            --max-time 15 \
-            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
-            "${{ secrets.SUPABASE_URL }}/rest/v1/")
+          SUPABASE_URL="${{ secrets.SUPABASE_URL }}"
+          SUPABASE_KEY="${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
 
-          echo "Status: $HTTP_STATUS"
-
-          if [ "$HTTP_STATUS" = "200" ]; then
-            echo "✅ Supabase is alive"
-          else
-            echo "❌ Ping failed with status $HTTP_STATUS"
-            exit 1
-          fi
-
-      - name: Log to ping_log
-        if: always()
-        run: |
+          # ── Step 1: Ping Supabase ──
+          echo "🔍 Pinging Supabase..."
           START=$(date +%s%3N)
 
-          # Re-ping to get fresh latency for the log
           HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
             --max-time 15 \
-            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
-            "${{ secrets.SUPABASE_URL }}/rest/v1/")
+            -H "apikey: ${SUPABASE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_KEY}" \
+            "${SUPABASE_URL}/rest/v1/")
 
           END=$(date +%s%3N)
           LATENCY=$((END - START))
 
           if [ "$HTTP_STATUS" = "200" ]; then
             ALIVE=true
+            echo "✅ Supabase responded | status: $HTTP_STATUS | latency: ${LATENCY}ms"
           else
             ALIVE=false
+            echo "❌ Ping failed | status: $HTTP_STATUS | latency: ${LATENCY}ms"
           fi
 
-          LOG_RESP=$(curl -s -w "\n%{http_code}" \
+          # ── Step 2: Write JSON body to a file (avoids escaping issues) ──
+          cat > /tmp/ping_payload.json <<EOF
+          {
+            "status": ${HTTP_STATUS},
+            "alive": ${ALIVE},
+            "latency_ms": ${LATENCY},
+            "source": "auto"
+          }
+          EOF
+
+          echo "📦 Payload:"
+          cat /tmp/ping_payload.json
+
+          # ── Step 3: Log to ping_log ──
+          echo "📝 Writing to ping_log..."
+
+          LOG_RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" \
             -X POST \
-            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "apikey: ${SUPABASE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_KEY}" \
             -H "Content-Type: application/json" \
-            -H "Prefer: return=minimal" \
-            -d "{\"status\": $HTTP_STATUS, \"alive\": $ALIVE, \"latency_ms\": $LATENCY, \"source\": \"auto\"}" \
-            "${{ secrets.SUPABASE_URL }}/rest/v1/ping_log")
+            -H "Prefer: return=representation" \
+            -d @/tmp/ping_payload.json \
+            "${SUPABASE_URL}/rest/v1/ping_log")
 
-          LOG_STATUS=$(echo "$LOG_RESP" | tail -1)
+          echo "📬 Response:"
+          echo "$LOG_RESPONSE"
 
-          if [ "$LOG_STATUS" = "201" ]; then
-            echo "✅ Logged: status=$HTTP_STATUS alive=$ALIVE latency=${LATENCY}ms source=auto"
+          LOG_CODE=$(echo "$LOG_RESPONSE" | grep "HTTP_CODE:" | cut -d: -f2)
+
+          if [ "$LOG_CODE" = "201" ]; then
+            echo "✅ Logged successfully with source=auto"
           else
-            echo "⚠️ Log write returned $LOG_STATUS"
-            echo "$LOG_RESP"
+            echo "⚠️ Log write returned: $LOG_CODE"
+          fi
+
+          # Fail workflow if Supabase is down
+          if [ "$ALIVE" = "false" ]; then
+            exit 1
           fi
