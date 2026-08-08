@@ -1,0 +1,68 @@
+name: Supabase Keep-Alive
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Ping Supabase
+        run: |
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            --max-time 15 \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/")
+
+          echo "Status: $HTTP_STATUS"
+
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "✅ Supabase is alive"
+          else
+            echo "❌ Ping failed with status $HTTP_STATUS"
+            exit 1
+          fi
+
+      - name: Log to ping_log
+        if: always()
+        run: |
+          START=$(date +%s%3N)
+
+          # Re-ping to get fresh latency for the log
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            --max-time 15 \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/")
+
+          END=$(date +%s%3N)
+          LATENCY=$((END - START))
+
+          if [ "$HTTP_STATUS" = "200" ]; then
+            ALIVE=true
+          else
+            ALIVE=false
+          fi
+
+          LOG_RESP=$(curl -s -w "\n%{http_code}" \
+            -X POST \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            -d "{\"status\": $HTTP_STATUS, \"alive\": $ALIVE, \"latency_ms\": $LATENCY, \"source\": \"auto\"}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/ping_log")
+
+          LOG_STATUS=$(echo "$LOG_RESP" | tail -1)
+
+          if [ "$LOG_STATUS" = "201" ]; then
+            echo "✅ Logged: status=$HTTP_STATUS alive=$ALIVE latency=${LATENCY}ms source=auto"
+          else
+            echo "⚠️ Log write returned $LOG_STATUS"
+            echo "$LOG_RESP"
+          fi
