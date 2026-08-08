@@ -16,7 +16,6 @@ jobs:
           SUPABASE_URL="${{ secrets.SUPABASE_URL }}"
           SUPABASE_KEY="${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
 
-          # ── Step 1: Ping Supabase ──
           echo "🔍 Pinging Supabase..."
           START=$(date +%s%3N)
 
@@ -37,43 +36,27 @@ jobs:
             echo "❌ Ping failed | status: $HTTP_STATUS | latency: ${LATENCY}ms"
           fi
 
-          # ── Step 2: Write JSON body to a file (avoids escaping issues) ──
-          cat > /tmp/ping_payload.json <<EOF
-          {
-            "status": ${HTTP_STATUS},
-            "alive": ${ALIVE},
-            "latency_ms": ${LATENCY},
-            "source": "auto"
-          }
-          EOF
+          PAYLOAD=$(printf '{"status":%s,"alive":%s,"latency_ms":%s,"source":"auto"}' "$HTTP_STATUS" "$ALIVE" "$LATENCY")
+          echo "📦 Payload: $PAYLOAD"
 
-          echo "📦 Payload:"
-          cat /tmp/ping_payload.json
-
-          # ── Step 3: Log to ping_log ──
           echo "📝 Writing to ping_log..."
-
           LOG_RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" \
             -X POST \
             -H "apikey: ${SUPABASE_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_KEY}" \
             -H "Content-Type: application/json" \
             -H "Prefer: return=representation" \
-            -d @/tmp/ping_payload.json \
+            -d "$PAYLOAD" \
             "${SUPABASE_URL}/rest/v1/ping_log")
 
-          echo "📬 Response:"
-          echo "$LOG_RESPONSE"
+          echo "📬 Response: $LOG_RESPONSE"
 
-          LOG_CODE=$(echo "$LOG_RESPONSE" | grep "HTTP_CODE:" | cut -d: -f2)
-
-          if [ "$LOG_CODE" = "201" ]; then
-            echo "✅ Logged successfully with source=auto"
+          if echo "$LOG_RESPONSE" | grep -q '"source":"auto"'; then
+            echo "✅ Confirmed: source=auto in database"
           else
-            echo "⚠️ Log write returned: $LOG_CODE"
+            echo "⚠️ Source may not be auto — check response above"
           fi
 
-          # Fail workflow if Supabase is down
           if [ "$ALIVE" = "false" ]; then
             exit 1
           fi
