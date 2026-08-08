@@ -22,8 +22,8 @@ jobs:
           import time
           import os
 
-          url = os.environ["SUPABASE_URL"]
-          key = os.environ["SUPABASE_KEY"]
+          url = os.environ["SUPABASE_URL"].strip()
+          key = os.environ["SUPABASE_KEY"].strip()
 
           headers = {
               "apikey": key,
