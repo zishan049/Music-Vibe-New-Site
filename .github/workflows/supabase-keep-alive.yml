@@ -17,7 +17,7 @@ jobs:
           SUPABASE_KEY="${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
 
           echo "🔍 Pinging Supabase..."
-          START=$(date +%s%3N)
+          START=$(date +%s%N)
 
           HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
             --max-time 15 \
@@ -25,8 +25,8 @@ jobs:
             -H "Authorization: Bearer ${SUPABASE_KEY}" \
             "${SUPABASE_URL}/rest/v1/")
 
-          END=$(date +%s%3N)
-          LATENCY=$((END - START))
+          END=$(date +%s%N)
+          LATENCY=$(( (END - START) / 1000000 ))
 
           if [ "$HTTP_STATUS" = "200" ]; then
             ALIVE=true
@@ -36,25 +36,37 @@ jobs:
             echo "❌ Ping failed | status: $HTTP_STATUS | latency: ${LATENCY}ms"
           fi
 
-          PAYLOAD=$(printf '{"status":%s,"alive":%s,"latency_ms":%s,"source":"auto"}' "$HTTP_STATUS" "$ALIVE" "$LATENCY")
+          # Build JSON with jq (guaranteed valid)
+          PAYLOAD=$(jq -n \
+            --argjson status "$HTTP_STATUS" \
+            --argjson alive "$ALIVE" \
+            --argjson latency "$LATENCY" \
+            --arg source "auto" \
+            '{status: $status, alive: $alive, latency_ms: $latency, source: $source}')
+
           echo "📦 Payload: $PAYLOAD"
 
           echo "📝 Writing to ping_log..."
-          LOG_RESPONSE=$(curl -s -w "\nHTTP_CODE:%{http_code}" \
+          LOG_BODY=$(curl -s \
             -X POST \
             -H "apikey: ${SUPABASE_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_KEY}" \
             -H "Content-Type: application/json" \
             -H "Prefer: return=representation" \
-            -d "$PAYLOAD" \
+            -d "${PAYLOAD}" \
+            -w "\n%{http_code}" \
             "${SUPABASE_URL}/rest/v1/ping_log")
 
-          echo "📬 Response: $LOG_RESPONSE"
+          HTTP_LOG=$(echo "$LOG_BODY" | tail -1)
+          RESPONSE=$(echo "$LOG_BODY" | head -n -1)
 
-          if echo "$LOG_RESPONSE" | grep -q '"source":"auto"'; then
-            echo "✅ Confirmed: source=auto in database"
+          echo "📬 HTTP: $HTTP_LOG"
+          echo "📬 Body: $RESPONSE"
+
+          if [ "$HTTP_LOG" = "201" ]; then
+            echo "✅ Logged with source=auto"
           else
-            echo "⚠️ Source may not be auto — check response above"
+            echo "❌ Log failed with HTTP $HTTP_LOG"
           fi
 
           if [ "$ALIVE" = "false" ]; then
