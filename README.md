@@ -12,21 +12,23 @@
   <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React 19" />
   <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
   <img src="https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=three.js&logoColor=white" alt="Three.js" />
-  <img src="https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion" />
+  <img src="https://img.shields.io/badge/Motion-000000?style=for-the-badge&logo=framer&logoColor=white" alt="Motion" />
   <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
 </p>
 
 ---
 
 ## 📽️ The Vision
-**Music Vibe** is a premium web application designed to showcase artists, releases, and collaborator networks through a **"Cinematic Dark × Editorial Luxury"** aesthetic. It is not just a website; it is an immersive environment where music meets high-end digital design.
+**Music Vibe** is a premium web application designed to showcase artists, releases, and collaborator networks through a **"Cinematic Dark × Editorial Luxury"** aesthetic. It is not just a website — it is an immersive environment where music meets high-end digital design.
 
 ### ✨ Key Features
-- 🌌 **Generative Ambience**: Powered by Three.js `FloatingLines`, creating a living, breathing canvas of geometric light.
-- 🎬 **Cinematic Loading**: A multi-phase entry sequence ensuring a premium first impression while preloading critical assets.
-- 🖱️ **Tactile Interactions**: From interactive `ClickSpark` effects to a magnetic `Floating Dock`, every interaction feels physical.
-- 💿 **3D Release Showcase**: Album releases feature `GlareCard` components with 3D tilt effects and dynamic glow signatures.
-- 🖋️ **Glitch Typography**: Creative, editorial-grade typography reflecting raw emotion and musical energy.
+- 🌌 **Generative Ambience**: Powered by Three.js `FloatingLines`, creating a living, breathing canvas of geometric light that reacts to pointer movement.
+- 🖱️ **Tactile Interactions**: From interactive `ClickSpark` particle effects to a magnetic `Dock`, every interaction feels physical.
+- 💿 **3D Release Showcase**: Album releases feature `GlareCard` components with 3D tilt and dynamic glow signatures.
+- 🖋️ **Editorial Typography**: `GlitchText` and `DecryptedText` animations deliver raw, editorial-grade typographic energy.
+- 🔒 **Asset Protection**: Right-click, drag, and middle-click guards prevent unauthorized image downloads.
+- 🔄 **Live Data**: Supabase Realtime Channels sync content changes to the UI instantly.
 
 ---
 
@@ -35,17 +37,22 @@ The codebase follows a modern, component-driven React architecture optimized for
 
 ```text
 Music-Vibe-New-Site/
+├── 📂 api/
+│   └── keep-alive.js    # Vercel Serverless Function — daily Supabase ping
 ├── 📂 src/
-│   ├── 🧩 components/   # UI Primitives (FloatingLines, Dock, GlareCard)
-│   ├── 📊 data/         # Content Definitions (tracks.json, socials.json)
-│   ├── 🪝 hooks/        # Custom Logic (Preloaders, Optimizers)
-│   ├── 🖼️ pages/        # Route Views (Home, Music, About, Friends)
-│   ├── 🎨 styles/       # Design System & Modern Tokens
-│   ├── ⚛️ App.jsx       # Root Layout & Orchestration
-│   └── 🚀 main.jsx      # Entry Point
-├── 📂 public/           # High-Res Assets & Artworks
-├── ⚙️ package.json      # Dependencies (React 19, Motion, Three.js)
-└── 🛠️ vite.config.js    # Optimized Build Config
+│   ├── 🧩 components/   # 15 UI primitives (FloatingLines, Dock, GlareCard, …)
+│   ├── 📊 data/         # Content files (tracks.json, socials.json, friends.json)
+│   ├── 🪝 hooks/        # Custom React hooks (reserved)
+│   ├── 🔧 lib/          # supabase.js — client initialisation
+│   ├── 🖼️ pages/        # Route views (Home, Music, About, Friends)
+│   ├── 🎨 styles/       # index.css — global design tokens & animations
+│   ├── ⚛️ App.jsx       # Root layout, routing & security guards
+│   └── 🚀 main.jsx      # Vite entry point
+├── 📂 public/           # High-res assets & artwork
+├── 📂 Admin/            # Internal admin tooling
+├── 📄 vercel.json       # Cron schedule for keep-alive
+├── ⚙️ package.json
+└── 🛠️ vite.config.js   # Manual chunk splitting (three, motion, react)
 ```
 
 ---
@@ -54,19 +61,43 @@ Music-Vibe-New-Site/
 
 | Category | Tools |
 | :--- | :--- |
-| **Core** | React 19, Vite, JavaScript (ES6+) |
-| **Animation** | Framer Motion, GSAP |
-| **Visuals** | Three.js, CSS3 (Custom Tokens) |
-| **Backend** | Supabase |
-| **Icons** | Lucide React |
+| **Core** | React 19, Vite 6, JavaScript (ES6+) |
+| **Animation** | Motion (`motion/react`) |
+| **Visuals** | Three.js, Tailwind CSS v4, Vanilla CSS |
+| **Style Utilities** | `clsx`, `tailwind-merge`, `class-variance-authority` |
+| **Backend** | Supabase (PostgreSQL + Realtime) |
+| **Deployment** | Vercel (Serverless Functions + Cron Jobs) |
+| **Icons** | Custom SVG map (`socialIcons.jsx`) |
+
+---
+
+## 🧩 Component Library
+
+| Component | Role |
+| :--- | :--- |
+| `FloatingLines` | Three.js shader background — pointer-reactive generative lines |
+| `ClickSpark` | Particle burst on every mouse click, wraps the entire app |
+| `Dock` | Floating magnetic navigation dock |
+| `GlareCard` | 3D tilt + glare card for release artwork |
+| `GlitchText` | Glitch-style animated text |
+| `DecryptedText` | Letter-scramble reveal animation |
+| `ScrollReveal` | Intersection-Observer fade/slide-in wrapper |
+| `PageTransition` | Motion-animated route transition |
+| `SocialLinks` | Pill-style social bar driven by `socials.json` |
+| `FriendCard` | Collaborator profile card |
+| `ProfileCard` | Artist profile display card |
+| `BorderGlow` | Animated glowing border accent |
+| `LogoLoop` | Repeating scrolling logo ticker |
+| `Footer` | Global site footer |
+| `Skeleton` | Loading placeholder skeleton |
 
 ---
 
 ## 🎧 Content Management
-Designed for creators, Music Vibe allows updates without touching core code.
+Music Vibe is designed so creators can update content without touching core code.
 
 ### 📀 Adding Releases
-Edit `src/data/tracks.json` to manage your music catalog:
+Edit `src/data/tracks.json`:
 ```json
 {
     "title": "Neon Dreams",
@@ -81,8 +112,11 @@ Edit `src/data/tracks.json` to manage your music catalog:
 > [!TIP]
 > Use the `accentColor` field to harmonize the 3D glare effects with your artwork's palette.
 
+### 🤝 Adding Friends / Collaborators
+Edit `src/data/friends.json` to manage the collaborator network shown on the Friends page.
+
 ### 🌐 Global Socials
-Update `src/data/socials.json`. Leaving a link empty will automatically remove it from the UI.
+Update `src/data/socials.json`. Leaving a link empty will automatically hide it from the UI.
 
 ---
 
@@ -94,17 +128,25 @@ Update `src/data/socials.json`. Leaving a link empty will automatically remove i
    ```bash
    npm install
    ```
-3. Configure your `.env` with Supabase credentials.
+3. Copy `.env.example` (or create `.env`) and add your Supabase credentials:
+   ```env
+   VITE_SUPABASE_URL=your_supabase_url
+   VITE_SUPABASE_ANON_KEY=your_anon_key
+   ```
 
 ### 💻 Development
 ```bash
 npm run dev
+# Runs on http://localhost:3000
 ```
 
-### 🏗️ Production
+### 🏗️ Production Build
 ```bash
 npm run build
 ```
+
+### 🌐 Deployment
+The project is deployed on **Vercel**. A daily cron job (`vercel.json`) calls `/api/keep-alive` at `00:00 UTC` to ping Supabase and prevent database cold starts. Add `SUPABASE_SERVICE_ROLE_KEY` to Vercel environment variables for server-side keep-alive access.
 
 ---
 
