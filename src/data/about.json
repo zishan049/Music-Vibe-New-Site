@@ -1,0 +1,29 @@
+[
+  {
+    "id": "1",
+    "title": "The Beginning",
+    "description": "Music Vibe started as a simple idea: to translate raw emotion into sound. What began as bedroom experiments has evolved into a journey of sonic discovery, blending melodic elements with deep, driving rhythms.",
+    "icon": "pause",
+    "card_type": "default",
+    "sort_order": 1,
+    "is_visible": true
+  },
+  {
+    "id": "2",
+    "title": "The Sound",
+    "description": "\"Emotions in Motion\" isn't just a tagline; it's the core philosophy. Every track is designed to move you, both physically and emotionally. From high-energy peaks to introspective breakdowns, the music reflects life's variety.",
+    "icon": "music",
+    "card_type": "default",
+    "sort_order": 2,
+    "is_visible": true
+  },
+  {
+    "id": "3",
+    "title": "The Story",
+    "description": "Coming Soon...",
+    "icon": "book",
+    "card_type": "story",
+    "sort_order": 3,
+    "is_visible": true
+  }
+]

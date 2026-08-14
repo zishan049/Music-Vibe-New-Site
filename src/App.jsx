@@ -59,7 +59,7 @@ export default function App() {
             <Dock />
             <ScrollToTop />
             <div id="app">
-                <Suspense fallback={<div style={{ background: '#000', height: '100vh', width: '100vw' }} />}>
+                <Suspense fallback={<div style={{ background: 'transparent', minHeight: '100vh', width: '100%' }} />}>
                     <Routes>
                         <Route path="/" element={<HomePage />} />
                         <Route path="/about" element={<AboutPage />} />

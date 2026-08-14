@@ -29,11 +29,16 @@ export default function FriendsPage() {
 
             const source = (error || !data?.length) ? friendsData : data
 
-            setFriends(source.map(friend => ({
-                ...friend,
-                avatarUrl: getStorageUrl('friends', friend.avatar_url),
-                image: getStorageUrl('friends', friend.image_url)
-            })))
+            setFriends(source.map(friend => {
+                const avatar = friend.avatar_url || ''
+                const bg = friend.image_url || friend.avatar_url || ''
+                return {
+                    ...friend,
+                    avatarUrl: avatar ? getStorageUrl('friends', avatar) : '',
+                    imageUrl: bg ? getStorageUrl('friends', bg) : '',
+                    image: bg ? getStorageUrl('friends', bg) : ''
+                }
+            }))
             setLoading(false)
         }
 
@@ -100,6 +105,7 @@ export default function FriendsPage() {
                                     <div className="friend-card-wrapper">
                                         <ProfileCard
                                             avatarUrl={friend.avatarUrl}
+                                            imageUrl={friend.imageUrl}
                                             name={friend.name}
                                             handle={friend.handle}
                                             title={friend.title}
@@ -132,6 +138,7 @@ export default function FriendsPage() {
                                     <div className="friend-card-wrapper">
                                         <ProfileCard
                                             avatarUrl={friend.avatarUrl}
+                                            imageUrl={friend.imageUrl}
                                             name={friend.name}
                                             handle={friend.handle}
                                             title={friend.title}

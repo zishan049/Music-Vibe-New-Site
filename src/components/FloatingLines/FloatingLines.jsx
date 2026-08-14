@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, memo } from 'react';
 import {
   Clock,
   Mesh,
@@ -230,7 +230,7 @@ function hexToVec3(hex) {
   return new Vector3(r / 255, g / 255, b / 255);
 }
 
-export default function FloatingLines({
+const FloatingLines = memo(function FloatingLines({
   linesGradient,
   enabledWaves = ['top', 'middle', 'bottom'],
   lineCount = [6],
@@ -503,4 +503,6 @@ export default function FloatingLines({
       }}
     />
   );
-}
+});
+
+export default FloatingLines;

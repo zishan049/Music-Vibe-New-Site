@@ -14,6 +14,7 @@ const STORAGE_BUCKET = 'assets'
  * @returns {string}
  */
 export function getStorageUrl(folder, filename) {
+    if (!filename) return ''
     return `${supabaseUrl}/storage/v1/object/public/${STORAGE_BUCKET}/${folder}/${encodeURIComponent(filename)}`
 }
 

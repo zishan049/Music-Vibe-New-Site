@@ -17,6 +17,8 @@ const adjust = (v, fMin, fMax, tMin, tMax) => round(tMin + ((tMax - tMin) * (v -
 
 const ProfileCardComponent = ({
     avatarUrl = '',
+    imageUrl = '',
+    bgUrl = '',
     iconUrl = '',
     grainUrl = '',
     innerGradient,
@@ -37,6 +39,7 @@ const ProfileCardComponent = ({
     onContactClick,
     contactUrl
 }) => {
+    const bgImageSrc = imageUrl || bgUrl || avatarUrl;
     const wrapRef = useRef(null);
     const shellRef = useRef(null);
     const enterTimerRef = useRef(null);
@@ -252,6 +255,15 @@ const ProfileCardComponent = ({
                         <div className="pc-shine" style={{ pointerEvents: 'none' }} />
                         <div className="pc-glare" style={{ pointerEvents: 'none' }} />
                         <div className="pc-content pc-avatar-content pc-fullbleed">
+                            {bgImageSrc && (
+                                <img
+                                    className="pc-bg-image"
+                                    src={bgImageSrc}
+                                    alt=""
+                                    aria-hidden="true"
+                                    loading="lazy"
+                                />
+                            )}
                             <img
                                 className="avatar"
                                 src={avatarUrl}
