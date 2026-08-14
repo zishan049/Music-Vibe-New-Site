@@ -51,9 +51,10 @@ export default function MusicPage() {
                 .order('id')
 
             if (error || !data?.length) {
-                setTracks(tracksData)
+                setTracks(tracksData.filter(t => t.is_visible !== false))
             } else {
-                setTracks(data.map(t => ({
+                const visible = data.filter(t => t.is_visible !== false)
+                setTracks(visible.map(t => ({
                     ...t,
                     accent_color: (t.accent_hue != null)
                         ? { hue: t.accent_hue, sat: t.accent_sat }
@@ -131,61 +132,67 @@ export default function MusicPage() {
 
                 {/* ── Gallery ──────────────────────────────── */}
                 <section className={`art-gallery-section section-optimize ${!loading ? 'is-ready' : 'is-loading'}`}>
-                    <div id="art-gallery" className={`art-gallery-grid ${!loading ? 'is-visible' : ''}`}>
-                        {tracks.map((track, i) => {
-                            const accent = track.accent_color
-                            const glowColor = accent
-                                ? `hsla(${accent.hue}, ${accent.sat}%, 60%, 0.6)`
-                                : 'rgba(255, 255, 255, 0.4)'
+                    {tracks.length === 0 && !loading ? (
+                        <div style={{ textAlign: 'center', padding: '80px 20px', color: 'rgba(255,255,255,0.4)', fontSize: '0.95rem' }}>
+                            No releases currently available — check back soon.
+                        </div>
+                    ) : (
+                        <div id="art-gallery" className={`art-gallery-grid ${!loading ? 'is-visible' : ''}`}>
+                            {tracks.map((track, i) => {
+                                const accent = track.accent_color
+                                const glowColor = accent
+                                    ? `hsla(${accent.hue}, ${accent.sat}%, 60%, 0.6)`
+                                    : 'rgba(255, 255, 255, 0.4)'
 
-                            return (
-                                <ScrollReveal
-                                    key={track.id || i}
-                                    delay={(i % 4) * 0.1} // Modulo to reset stagger timing per row
-                                    distance={25}
-                                >
-                                    <a
-                                        href={track.link || '#'}
-                                        target={track.link ? '_blank' : undefined}
-                                        rel={track.link ? 'noopener noreferrer' : undefined}
-                                        className="art-card"
-                                        style={{
-                                            '--glow-color': glowColor,
-                                        }}
-                                        title={track.title}
-                                        onMouseEnter={() => setHoveredColor(accent || null)}
-                                        onMouseLeave={() => setHoveredColor(null)}
+                                return (
+                                    <ScrollReveal
+                                        key={track.id || i}
+                                        delay={(i % 4) * 0.1} // Modulo to reset stagger timing per row
+                                        distance={25}
                                     >
-                                        <div className="art-card-inner">
-                                            <SmoothImage
-                                                src={getArtworkUrl(track.artwork)}
-                                                alt={`${track.title} artwork`}
-                                                className="art-card-image"
-                                                i={i}
-                                            />
-                                            <div className="art-card-overlay">
-                                                <h3 className="art-card-title">{track.title}</h3>
-                                                <div className="art-card-meta">
-                                                    <span className="art-card-type">{track.type}</span>
-                                                    <span className="art-card-year">{track.year}</span>
-                                                    {track.status === 'Upcoming' && (
-                                                        <span className="art-card-upcoming">Upcoming</span>
+                                        <a
+                                            href={track.link || '#'}
+                                            target={track.link ? '_blank' : undefined}
+                                            rel={track.link ? 'noopener noreferrer' : undefined}
+                                            className="art-card"
+                                            style={{
+                                                '--glow-color': glowColor,
+                                            }}
+                                            title={track.title}
+                                            onMouseEnter={() => setHoveredColor(accent || null)}
+                                            onMouseLeave={() => setHoveredColor(null)}
+                                        >
+                                            <div className="art-card-inner">
+                                                <SmoothImage
+                                                    src={getArtworkUrl(track.artwork)}
+                                                    alt={`${track.title} artwork`}
+                                                    className="art-card-image"
+                                                    i={i}
+                                                />
+                                                <div className="art-card-overlay">
+                                                    <h3 className="art-card-title">{track.title}</h3>
+                                                    <div className="art-card-meta">
+                                                        <span className="art-card-type">{track.type}</span>
+                                                        <span className="art-card-year">{track.year}</span>
+                                                        {track.status === 'Upcoming' && (
+                                                            <span className="art-card-upcoming">Upcoming</span>
+                                                        )}
+                                                    </div>
+                                                    {track.link && (
+                                                        <div className="art-card-external">
+                                                            <svg viewBox="0 0 24 24">
+                                                                <path d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
+                                                            </svg>
+                                                        </div>
                                                     )}
                                                 </div>
-                                                {track.link && (
-                                                    <div className="art-card-external">
-                                                        <svg viewBox="0 0 24 24">
-                                                            <path d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
-                                                        </svg>
-                                                    </div>
-                                                )}
                                             </div>
-                                        </div>
-                                    </a>
-                                </ScrollReveal>
-                            )
-                        })}
-                    </div>
+                                        </a>
+                                    </ScrollReveal>
+                                )
+                            })}
+                        </div>
+                    )}
                 </section>
 
                 {/* ── Logo Loop ────────────────────────────────── */}

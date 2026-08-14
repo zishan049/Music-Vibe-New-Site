@@ -133,14 +133,15 @@ export default function HomePage() {
                 .order('id')
 
             if (!error && data?.length) {
-                setTracks(data.map(t => ({
+                const visible = data.filter(t => t.is_visible !== false)
+                setTracks(visible.map(t => ({
                     ...t,
                     accent_color: (t.accent_hue != null)
                         ? { hue: t.accent_hue, sat: t.accent_sat }
                         : null
                 })))
             } else {
-                setTracks(tracksData)
+                setTracks(tracksData.filter(t => t.is_visible !== false))
             }
         }
 
