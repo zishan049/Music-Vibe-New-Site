@@ -1,156 +1,236 @@
-<p align="center">
-  <img src="public/Assets/tp_logo.png" width="150" alt="Music Vibe Logo" />
-</p>
+<div align="center">
 
-<h1 align="center">Music Vibe</h1>
+  <img src="public/Assets/tp_logo.png" width="130" alt="Music Vibe" style="border-radius: 12px; margin-bottom: 16px;" />
 
-<p align="center">
-  <i>A Cinematic, Music-Focused Immersive Experience</i>
-</p>
+  # MUSIC VIBE
 
-<p align="center">
-  <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React 19" />
-  <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
-  <img src="https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=three.js&logoColor=white" alt="Three.js" />
-  <img src="https://img.shields.io/badge/Motion-000000?style=for-the-badge&logo=framer&logoColor=white" alt="Motion" />
-  <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
-  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
-</p>
+  ### *Cinematic Ambient & Experimental Soundscapes*
+
+  A bespoke, high-performance web experience at the intersection of music production and editorial luxury digital design.
+
+  <br />
+
+  <p align="center">
+    <a href="https://music-vibe.vercel.app"><img src="https://img.shields.io/badge/LIVE_SITE-ONLINE-000000?style=for-the-badge&logo=vercel&logoColor=white&labelColor=111111" alt="Live Site" /></a>
+    <img src="https://img.shields.io/badge/React-19.0-000000?style=for-the-badge&logo=react&logoColor=61DAFB&labelColor=111111" alt="React 19" />
+    <img src="https://img.shields.io/badge/Three.js-WebGL-000000?style=for-the-badge&logo=three.js&logoColor=white&labelColor=111111" alt="Three.js" />
+    <img src="https://img.shields.io/badge/Motion-v12-000000?style=for-the-badge&logo=framer&logoColor=white&labelColor=111111" alt="Motion" />
+    <img src="https://img.shields.io/badge/Tailwind-v4-000000?style=for-the-badge&logo=tailwindcss&logoColor=38BDF8&labelColor=111111" alt="Tailwind CSS v4" />
+    <img src="https://img.shields.io/badge/Supabase-Realtime-000000?style=for-the-badge&logo=supabase&logoColor=3ECF8E&labelColor=111111" alt="Supabase" />
+    <img src="https://img.shields.io/badge/Vite-6.0-000000?style=for-the-badge&logo=vite&logoColor=646CFF&labelColor=111111" alt="Vite" />
+  </p>
+
+  <p align="center">
+    <a href="#-the-vision">Vision</a> &nbsp;•&nbsp;
+    <a href="#-experience-pillars">Pillars</a> &nbsp;•&nbsp;
+    <a href="#-architecture">Architecture</a> &nbsp;•&nbsp;
+    <a href="#-component-catalog">Components</a> &nbsp;•&nbsp;
+    <a href="#-headless-content-management">Content CMS</a> &nbsp;•&nbsp;
+    <a href="#-quick-start">Quick Start</a> &nbsp;•&nbsp;
+    <a href="#-deployment--automation">Deployment</a>
+  </p>
+
+</div>
 
 ---
 
-## 📽️ The Vision
-**Music Vibe** is a premium web application designed to showcase artists, releases, and collaborator networks through a **"Cinematic Dark × Editorial Luxury"** aesthetic. It is not just a website — it is an immersive environment where music meets high-end digital design.
+## ✦ The Vision
 
-### ✨ Key Features
-- 🌌 **Generative Ambience**: Powered by Three.js `FloatingLines`, creating a living, breathing canvas of geometric light that reacts to pointer movement.
-- 🖱️ **Tactile Interactions**: From interactive `ClickSpark` particle effects to a magnetic `Dock`, every interaction feels physical.
-- 💿 **3D Release Showcase**: Album releases feature `GlareCard` components with 3D tilt and dynamic glow signatures.
-- 🖋️ **Editorial Typography**: `GlitchText` and `DecryptedText` animations deliver raw, editorial-grade typographic energy.
-- 🔒 **Asset Protection**: Right-click, drag, and middle-click guards prevent unauthorized image downloads.
-- 🔄 **Live Data**: Supabase Realtime Channels sync content changes to the UI instantly.
+**Music Vibe** is not a standard promotional website—it is an atmospheric audio-visual landscape engineered for electronic, ambient, and experimental artists. Built around a **"Cinematic Dark × Editorial Brutalism"** design system, every pixel, shader, and interaction is choreographed to reflect the emotional frequency of the music.
 
 ---
 
-## 🏗️ Architecture
-The codebase follows a modern, component-driven React architecture optimized for performance and aesthetic precision.
+## ◈ Experience Pillars
 
-```text
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>🌌 Generative WebGL Ambience</h3>
+      <p>Custom <code>FloatingLines</code> GPU shader canvas built with <b>Three.js</b>. Procedural geometric light waves drift organically across the viewport and distort dynamically in response to cursor velocity vectors.</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>⚡ Tactile Acoustic Physics</h3>
+      <p>From the cursor-reactive <code>ClickSpark</code> particle burst engine to the magnetic spring <code>Dock</code> and the multi-layered Hero ghost stroke with acoustic reverb echo, every touch feels physical.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>💿 3D Release Gallery</h3>
+      <p>Interactive <code>GlareCard</code> surfaces featuring 3D gyroscopic tilt, specular light sheen, and individual HSL accent color signatures matching each release's cover artwork.</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>🖋️ Editorial Brutalist Typography</h3>
+      <p>Typographic performance driven by <b>Syne</b> and <b>Plus Jakarta Sans</b>, amplified with <code>DecryptedText</code> matrix-style cipher scrambles and split-word clip reveals.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>🔒 Asset & Identity Protection</h3>
+      <p>Custom security layers disabling right-click context menus, image dragging, middle-click scraping, and developer inspection hooks to safeguard original audio-visual assets.</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>🔄 Realtime Cloud Architecture</h3>
+      <p>Powered by <b>Supabase</b> PostgreSQL with realtime channel sync, cloud storage artwork streaming, and automated serverless keep-alive cron jobs.</p>
+    </td>
+  </tr>
+</table>
+
+---
+
+## ⬡ Architecture
+
+The codebase adheres to a modular, high-performance React architecture with isolated components, headless data layers, and manual vendor chunking:
+
+```
 Music-Vibe-New-Site/
-├── 📂 api/
-│   └── keep-alive.js    # Vercel Serverless Function — daily Supabase ping
-├── 📂 src/
-│   ├── 🧩 components/   # 15 UI primitives (FloatingLines, Dock, GlareCard, …)
-│   ├── 📊 data/         # Content files (tracks.json, socials.json, friends.json)
-│   ├── 🪝 hooks/        # Custom React hooks (reserved)
-│   ├── 🔧 lib/          # supabase.js — client initialisation
-│   ├── 🖼️ pages/        # Route views (Home, Music, About, Friends)
-│   ├── 🎨 styles/       # index.css — global design tokens & animations
-│   ├── ⚛️ App.jsx       # Root layout, routing & security guards
-│   └── 🚀 main.jsx      # Vite entry point
-├── 📂 public/           # High-res assets & artwork
-├── 📂 Admin/            # Internal admin tooling
-├── 📄 vercel.json       # Cron schedule for keep-alive
-├── ⚙️ package.json
-└── 🛠️ vite.config.js   # Manual chunk splitting (three, motion, react)
+├── 📁 api/
+│   └── keep-alive.js          # Vercel Serverless Function (Daily Supabase ping)
+├── 📁 src/
+│   ├── 📁 components/         # 15+ Micro-engineered UI primitives
+│   │   ├── BorderGlow/        # Dynamic glowing border accent wrapper
+│   │   ├── ClickSpark/        # Global canvas particle burst on click
+│   │   ├── DecryptedText/     # Reconfigurable matrix letter-scramble
+│   │   ├── Dock/              # MacOS-style magnetic floating navigation
+│   │   ├── FloatingLines/     # Three.js generative shader background
+│   │   ├── GlareCard/         # 3D tilt & dynamic specular release card
+│   │   ├── LogoLoop/          # Infinite horizontal hardware-accelerated ticker
+│   │   ├── PageTransition/    # Motion router transition orchestration
+│   │   ├── ScrollReveal/      # Viewport intersection reveal wrapper
+│   │   └── SocialLinks/       # Dynamic pill-style streaming links
+│   ├── 📁 data/               # Headless JSON content layers
+│   │   ├── tracks.json        # Release metadata, links & accent hues
+│   │   ├── socials.json       # Streaming platforms & profile links
+│   │   ├── friends.json       # Collaborator & collective network
+│   │   └── socialIcons.jsx    # Pure SVG brand icon registry
+│   ├── 📁 lib/                # Cloud SDK initialization (Supabase)
+│   ├── 📁 pages/              # Route views (HomePage, MusicPage, About, Friends)
+│   ├── 📁 styles/             # index.css (Design tokens, grain & animations)
+│   ├── App.jsx                # Global shell, layout & protection listeners
+│   └── main.jsx               # React 19 root mounting
+├── 📁 public/                 # Static assets, logos & local artwork fallbacks
+├── vercel.json                # Cron schedule & edge configuration
+└── vite.config.js             # Manual vendor chunk splitting (Three, Motion, React)
 ```
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Category | Tools |
-| :--- | :--- |
-| **Core** | React 19, Vite 6, JavaScript (ES6+) |
-| **Animation** | Motion (`motion/react`) |
-| **Visuals** | Three.js, Tailwind CSS v4, Vanilla CSS |
-| **Style Utilities** | `clsx`, `tailwind-merge`, `class-variance-authority` |
-| **Backend** | Supabase (PostgreSQL + Realtime) |
-| **Deployment** | Vercel (Serverless Functions + Cron Jobs) |
-| **Icons** | Custom SVG map (`socialIcons.jsx`) |
+| Layer | Technologies | Role & Purpose |
+| :--- | :--- | :--- |
+| **Core Framework** | `React 19` · `Vite 6` · `ESNext` | Ultrafast HMR, concurrent rendering & optimal hydration |
+| **Animation & Physics** | `Motion v12` (`motion/react`) | Fluid spring physics, layout animations & scroll parallax |
+| **3D & Creative Coding** | `Three.js` | WebGL canvas shaders & generative wave interference |
+| **Styling & Tokens** | `Tailwind CSS v4` · Vanilla CSS | Design token architecture, brutalist typography & grain filters |
+| **Style Utilities** | `clsx` · `tailwind-merge` · `cva` | Type-safe dynamic class variance & clean composition |
+| **Cloud & Backend** | `Supabase` (PostgreSQL + Realtime) | Cloud artwork storage, realtime releases & profile data |
+| **Infrastructure** | `Vercel` (Edge + Serverless Crons) | Global CDN distribution & automated DB keep-alive |
 
 ---
 
-## 🧩 Component Library
+## 🧩 Component Catalog
 
-| Component | Role |
-| :--- | :--- |
-| `FloatingLines` | Three.js shader background — pointer-reactive generative lines |
-| `ClickSpark` | Particle burst on every mouse click, wraps the entire app |
-| `Dock` | Floating magnetic navigation dock |
-| `GlareCard` | 3D tilt + glare card for release artwork |
-| `GlitchText` | Glitch-style animated text |
-| `DecryptedText` | Letter-scramble reveal animation |
-| `ScrollReveal` | Intersection-Observer fade/slide-in wrapper |
-| `PageTransition` | Motion-animated route transition |
-| `SocialLinks` | Pill-style social bar driven by `socials.json` |
-| `FriendCard` | Collaborator profile card |
-| `ProfileCard` | Artist profile display card |
-| `BorderGlow` | Animated glowing border accent |
-| `LogoLoop` | Repeating scrolling logo ticker |
-| `Footer` | Global site footer |
-| `Skeleton` | Loading placeholder skeleton |
+| Component | Technology | Experience Description |
+| :--- | :--- | :--- |
+| `FloatingLines` | Three.js / WebGL | Generative vector line shader canvas that reacts to mouse velocity |
+| `ClickSpark` | HTML5 Canvas | Emits radiant geometric spark particles at cursor click coordinates |
+| `Dock` | Motion Spring Physics | Floating navigation dock with magnetic icon magnification |
+| `GlareCard` | CSS 3D Transforms | 3D tilting card with realistic holographic light reflection |
+| `DecryptedText` | React Animation Hooks | Scrambled cryptographic character reveal effect |
+| `ScrollReveal` | IntersectionObserver | Smooth cinematic entry triggers for text & content strips |
+| `LogoLoop` | CSS GPU Compositing | Seamless infinite marquee loop with zero jitter |
+| `SocialLinks` | SVG Map / React | Dynamic brand pill links with platform-specific hover states |
+| `PageTransition` | Motion AnimatePresence | Smooth cinematic cross-fades and slide transitions between pages |
 
 ---
 
-## 🎧 Content Management
-Music Vibe is designed so creators can update content without touching core code.
+## 🎧 Headless Content Management
 
-### 📀 Adding Releases
-Edit `src/data/tracks.json`:
+The entire site is configured headlessly via `src/data/`, allowing seamless updates without altering core code.
+
+### 📀 Adding or Modifying Releases (`tracks.json`)
 ```json
 {
-    "title": "Neon Dreams",
-    "artwork": "neon-dreams.jpg",
-    "link": "https://ffm.to/neondreams",
-    "year": "2026",
-    "type": "Single",
-    "status": "Released",
-    "accentColor": { "hue": 280, "sat": 85 }
+  "title": "Neon Dreams",
+  "artwork": "neon-dreams.jpg",
+  "link": "https://ffm.to/neondreams",
+  "year": "2026",
+  "type": "Single",
+  "status": "Released",
+  "accentColor": { "hue": 280, "sat": 85 }
 }
 ```
 > [!TIP]
-> Use the `accentColor` field to harmonize the 3D glare effects with your artwork's palette.
+> The `accentColor` object controls the dynamic glare gradient and aura emitted by the release's 3D card.
 
-### 🤝 Adding Friends / Collaborators
-Edit `src/data/friends.json` to manage the collaborator network shown on the Friends page.
+### 🤝 Updating Collaborators (`friends.json`)
+Manage artist network, collaborative projects, roles, and direct streaming links displayed on the `/friends` page.
 
-### 🌐 Global Socials
-Update `src/data/socials.json`. Leaving a link empty will automatically hide it from the UI.
+### 🌐 Socials & Streaming (`socials.json`)
+Manage Spotify, Apple Music, YouTube, SoundCloud, Instagram, and BandLab links. Leaving any link string empty automatically removes the platform pill from the UI.
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
-### 📦 Installation
-1. Clone the repository.
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Copy `.env.example` (or create `.env`) and add your Supabase credentials:
-   ```env
-   VITE_SUPABASE_URL=your_supabase_url
-   VITE_SUPABASE_ANON_KEY=your_anon_key
-   ```
+### Prerequisites
+- Node.js `18.x` or higher
+- npm, pnpm, or yarn
 
-### 💻 Development
+### 1. Clone & Install
 ```bash
-npm run dev
-# Runs on http://localhost:3000
+git clone https://github.com/zishan049/Music-Vibe-New-Site.git
+cd Music-Vibe-New-Site
+npm install
 ```
 
-### 🏗️ Production Build
+### 2. Configure Environment
+Create a `.env` file in the project root:
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+
+### 3. Run Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 4. Build for Production
 ```bash
 npm run build
 ```
-
-### 🌐 Deployment
-The project is deployed on **Vercel**. A daily cron job (`vercel.json`) calls `/api/keep-alive` at `00:00 UTC` to ping Supabase and prevent database cold starts. Add `SUPABASE_SERVICE_ROLE_KEY` to Vercel environment variables for server-side keep-alive access.
+Optimized static bundles and vendor chunks will be output to `/dist`.
 
 ---
 
-<p align="center">
-  <b>Developed with Passion by <a href="https://github.com/zishan049">@zishan049</a></b><br>
-  Part of the <b>Music Vibe</b> ecosystem.
-</p>
+## ⚡ Deployment & Automation
+
+The project is pre-configured for frictionless deployment on **Vercel**:
+
+- **Edge CDN**: Automatic asset compression and instant global caching.
+- **Serverless Keep-Alive (`/api/keep-alive`)**:
+  Free-tier Supabase projects pause after inactivity. A daily Vercel Cron (`vercel.json`) invokes `/api/keep-alive` every day at `00:00 UTC` to perform an active database heartbeat ping:
+  ```json
+  {
+    "crons": [
+      {
+        "path": "/api/keep-alive",
+        "schedule": "0 0 * * *"
+      }
+    ]
+  }
+  ```
+
+---
+
+<div align="center">
+
+  <sub>Crafted with obsessive attention to audio-visual harmony by <a href="https://github.com/zishan049"><b>@zishan049</b></a></sub>
+
+  <br />
+
+  <sub>© 2026 <b>Music Vibe</b>. All rights reserved.</sub>
+
+</div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'motion/react'
+import { motion, useScroll, useTransform, useSpring, AnimatePresence, useMotionValue } from 'motion/react'
 import { supabase, getStorageUrl } from '../lib/supabase'
 import tracksData from '../data/tracks.json'
 import socialsDataFallback from '../data/socials.json'
@@ -211,6 +211,27 @@ export default function HomePage() {
     const rawStrokeY = useTransform(scrollYProgress, [0, 1], [0, -55])
     const strokeY = useSpring(rawStrokeY, { stiffness: 55, damping: 18 })
 
+    /* ── Interactive acoustic field (smooth cursor proximity) ── */
+    const strokeMouseX = useMotionValue(0)
+    const strokeMouseY = useMotionValue(0)
+    const springStrokeX = useSpring(strokeMouseX, { stiffness: 45, damping: 22 })
+    const springStrokeY = useSpring(strokeMouseY, { stiffness: 45, damping: 22 })
+
+    const handleHeroMouseMove = (e) => {
+        if (!heroRef.current) return
+        const rect = heroRef.current.getBoundingClientRect()
+        const relX = (e.clientX - rect.left) / rect.width - 0.5
+        const relY = (e.clientY - rect.top) / rect.height - 0.5
+        // Micro-displacement (±14px horizontal, ±10px vertical) for zero interference
+        strokeMouseX.set(relX * 28)
+        strokeMouseY.set(relY * 20)
+    }
+
+    const handleHeroMouseLeave = () => {
+        strokeMouseX.set(0)
+        strokeMouseY.set(0)
+    }
+
     const getArtworkUrl = (filename) => getStorageUrl('artwork', filename)
 
     return (
@@ -219,7 +240,12 @@ export default function HomePage() {
             {/* ══════════════════════════════════════
                 HERO SECTION
                 ══════════════════════════════════════ */}
-            <section className="hp-hero" ref={heroRef}>
+            <section
+                className="hp-hero"
+                ref={heroRef}
+                onMouseMove={handleHeroMouseMove}
+                onMouseLeave={handleHeroMouseLeave}
+            >
 
 
                 {/* ── Massive display type ── */}
@@ -227,14 +253,24 @@ export default function HomePage() {
                     className="hp-hero__display"
                     style={{ y: titleY, opacity: heroOpacity }}
                 >
-                    {/* Ghost stroke layer — parallax offset */}
-                    <motion.span
-                        className="hp-hero__title-stroke"
+                    {/* Ghost stroke layer — parallax offset + layered acoustic reverberation */}
+                    <motion.div
+                        className="hp-hero__stroke-container"
                         aria-hidden="true"
                         style={{ y: strokeY }}
-                    />
+                    >
+                        <motion.div
+                            className="hp-hero__stroke-interactive"
+                            style={{ x: springStrokeX, y: springStrokeY }}
+                        >
+                            {/* Primary Reverb: undulating organic float & breathing luminescence */}
+                            <span className="hp-hero__title-stroke hp-hero__title-stroke--ambient" />
+                            {/* Secondary Sub-harmonic Echo: out-of-phase stereo delay depth */}
+                            <span className="hp-hero__title-stroke hp-hero__title-stroke--echo" />
+                        </motion.div>
+                    </motion.div>
 
-                    {/* Solid title — word-by-word clip reveal */}
+                    {/* Solid title — word-by-word clip reveal (untouched foreground layer) */}
                     <h1 className="hp-hero__title-group" aria-label="Music Vibe">
                         <HeroWord word="Music" delay={0.2} />
                         <HeroWord word="Vibe" delay={0.38} />

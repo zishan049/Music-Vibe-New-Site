@@ -38,13 +38,27 @@
   margin-bottom: 32px;
 }
 
-.hp-hero__title-stroke {
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.12);
-  color: transparent;
+/* ── Hero Ghost Stroke Container & Acoustic Layers ── */
+.hp-hero__stroke-container {
   position: absolute;
   top: 0;
   left: 72px;
   z-index: 1;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+}
+
+.hp-hero__stroke-interactive {
+  display: block;
+  position: relative;
+  will-change: transform;
+}
+
+.hp-hero__title-stroke {
+  position: absolute;
+  top: 0;
+  left: 0;
   font-family: var(--font-display);
   font-size: clamp(5rem, 16vw, 18rem);
   font-weight: 800;
@@ -52,8 +66,9 @@
   letter-spacing: -0.04em;
   text-transform: uppercase;
   pointer-events: none;
-  transform: translate(8px, 8px);
   white-space: pre;
+  color: transparent;
+  will-change: transform, opacity, filter;
 }
 
 .hp-hero__title-stroke::before {
@@ -61,7 +76,72 @@
   white-space: pre;
 }
 
+/* Primary Ambient Reverb Layer (Hypnotic organic float & breathing luminescence) */
+.hp-hero__title-stroke--ambient {
+  -webkit-text-stroke: 1.2px rgba(255, 255, 255, 0.18);
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.05));
+  animation: hpGhostAmbientFloat 8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+/* Secondary Sub-harmonic Echo Layer (Out-of-phase stereo delay depth) */
+.hp-hero__title-stroke--echo {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.08);
+  filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.03));
+  animation: hpGhostEchoFloat 12s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+/* ── Ghost Stroke Keyframe Animations ── */
+@keyframes hpGhostAmbientFloat {
+  0% {
+    transform: translate3d(8px, 8px, 0);
+    opacity: 0.14;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.04));
+  }
+  25% {
+    transform: translate3d(14px, 5px, 0);
+    opacity: 0.24;
+    filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.12));
+  }
+  50% {
+    transform: translate3d(16px, 13px, 0);
+    opacity: 0.15;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.05));
+  }
+  75% {
+    transform: translate3d(9px, 15px, 0);
+    opacity: 0.26;
+    filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.14));
+  }
+  100% {
+    transform: translate3d(8px, 8px, 0);
+    opacity: 0.14;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.04));
+  }
+}
+
+@keyframes hpGhostEchoFloat {
+  0% {
+    transform: translate3d(16px, 15px, 0);
+    opacity: 0.05;
+  }
+  40% {
+    transform: translate3d(24px, 10px, 0);
+    opacity: 0.11;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.08));
+  }
+  75% {
+    transform: translate3d(12px, 22px, 0);
+    opacity: 0.07;
+  }
+  100% {
+    transform: translate3d(16px, 15px, 0);
+    opacity: 0.05;
+  }
+}
+
 .hp-hero__title-group {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -530,8 +610,8 @@
    ═══════════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
   .hp-hero__display, .hp-releases { padding-left: 48px; }
-  .hp-hero__title-group { font-size: clamp(3.5rem, 13vw, 8rem); }
-  .hp-hero__title-stroke { left: 48px; font-size: clamp(3.5rem, 13vw, 8rem); }
+  .hp-hero__title-group, .hp-hero__title-stroke { font-size: clamp(3.5rem, 13vw, 8rem); }
+  .hp-hero__stroke-container { left: 48px; }
   .hp-hero__bottom { padding: 0 40px 0 48px; }
   .hp-hero__scroll { left: 50%; }
   .hp-releases { padding-right: 48px; }
@@ -567,8 +647,10 @@
 @media (max-width: 768px) {
   .hp-hero { padding-bottom: 40px; }
   .hp-hero__display { padding-left: 32px; margin-bottom: 24px; }
-  .hp-hero__title-group { font-size: clamp(3rem, 12vw, 5rem); }
-  .hp-hero__title-stroke { left: 32px; font-size: clamp(3rem, 12vw, 5rem); }
+  .hp-hero__title-group, .hp-hero__title-stroke { font-size: clamp(3rem, 12vw, 5rem); }
+  .hp-hero__stroke-container { left: 32px; }
+  .hp-hero__title-stroke--ambient { animation-name: hpGhostAmbientFloatMobile; }
+  .hp-hero__title-stroke--echo { display: none; }
 
   
   .hp-hero__bottom { 
@@ -603,7 +685,7 @@
 
 @media (max-width: 420px) {
   .hp-hero__display { padding-left: 16px; }
-  .hp-hero__title-stroke { left: 16px; }
+  .hp-hero__stroke-container { left: 16px; }
   .hp-hero__word:nth-child(2) { padding-left: 1rem; }
 
   
@@ -633,4 +715,34 @@
   .hp-release-card__title { font-size: 1rem; }
   .hp-about-strip__cell-value { font-size: 1.15rem; }
   .hp-about-strip__cell-label { letter-spacing: 0.2em; }
+}
+
+/* ── Mobile & Reduced Motion Fallbacks ── */
+@keyframes hpGhostAmbientFloatMobile {
+  0% {
+    transform: translate3d(5px, 5px, 0);
+    opacity: 0.12;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.03));
+  }
+  50% {
+    transform: translate3d(8px, 7px, 0);
+    opacity: 0.22;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.10));
+  }
+  100% {
+    transform: translate3d(5px, 5px, 0);
+    opacity: 0.12;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.03));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hp-hero__title-stroke--ambient {
+    animation: none !important;
+    transform: translate(6px, 6px) !important;
+    opacity: 0.14 !important;
+  }
+  .hp-hero__title-stroke--echo {
+    display: none !important;
+  }
 }
