@@ -1,6 +1,6 @@
 <div id="phase2-overlay" class="p2-overlay p2-hidden">
     <div class="p2-content">
-        <img src="Assets/musicvibe.png" alt="Music Vibe" class="p2-logo" id="p2-logo" />
+        <img src="/Assets/mv-monogram.svg" alt="Music Vibe monogram" class="p2-logo" id="p2-logo" />
 
         <!-- Title and Tagline (Merged from Phase 3) -->
         <div class="p2-text-container" id="p2-text">
@@ -22,9 +22,7 @@
         flex-direction: column;
         opacity: 0;
         pointer-events: none;
-        /* transition: opacity 0.5s ease; Removed for instant black overlay (content still animates) */
         padding-top: 150px;
-        /* Match header padding-top to align logo vertically if needed, or adjust alignment logic */
     }
 
     .p2-overlay.p2-active {
@@ -34,66 +32,36 @@
 
     .p2-logo {
         position: absolute;
-        /* Kept absolute for initial alignment with Home Logo if needed, or relative in flex container? */
-        /* Let's keep it absolute for the precise handover, then maybe animate it? 
-           Actually, if we want title under it, relative might be better. 
-           But the handover requires absolute position matching. 
-           Let's stick to Absolute for the transition, then maybe move the text relative to it? 
-           Or just absolute position the text too? 
-           Let's try to keep the logic simple: 
-           1. Logo Handover (Absolute).
-           2. Title Fade In (Absolute or fixed relative to logo?). 
-           
-           Better approach for "Logo loaded then load Title":
-           - P2 Logo matches Home Logo Position.
-           - Home Logo is in Header.
-           - Title is in Header.
-           - We should probably replicate the Header layout in the Overlay.
-        */
         width: 220px;
         height: auto;
-        border-radius: 50%;
-        border: 4px solid var(--accent, #ffffff);
-        border-color: var(--accent, #ffffff);
-        object-fit: cover;
+        border: 0;
+        border-radius: 0;
+        object-fit: contain;
         opacity: 0;
         transform: scale(0.8);
-        box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+        filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
         transition: opacity 0.8s ease,
             transform 1s cubic-bezier(0.23, 1, 0.32, 1),
-            box-shadow 1s ease;
+            filter 1s ease;
         z-index: 2;
     }
 
     .p2-overlay.p2-show-logo .p2-logo {
         opacity: 1;
         transform: scale(1);
-        box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
-    }
-
-    /* Pulse effect */
-    .p2-overlay.p2-show-logo .p2-logo {
+        filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.22));
         animation: logoPulse 2s infinite alternate;
     }
 
     @keyframes logoPulse {
-        from {
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-        }
-
-        to {
-            box-shadow: 0 0 40px rgba(255, 255, 255, 0.6);
-        }
+        from { filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.16)); }
+        to { filter: drop-shadow(0 0 24px rgba(255, 255, 255, 0.3)); }
     }
 
-    /* Text Container */
     .p2-text-container {
         position: absolute;
-        /* Will be positioned by JS */
         left: 50%;
-        /* Fallback */
         top: 60%;
-        /* Fallback */
         text-align: center;
         opacity: 0;
         transform: translateX(-50%) translateY(20px);
@@ -102,7 +70,6 @@
         width: auto;
         white-space: nowrap;
         margin: 0;
-        /* Important: remove margins to allow precise positioning */
     }
 
     .p2-overlay.p2-reveal-text .p2-text-container {
@@ -127,8 +94,6 @@
         font-size: 1.1rem;
         margin-top: 10px;
     }
-
-    /* Final Exit handled by Sequncer.css .sequencer-exit */
 </style>
 
 <script>
@@ -144,11 +109,9 @@
                 return;
             }
 
-            // 1. Activate Overlay (Black background)
             overlay.classList.remove('p2-hidden');
             overlay.classList.add('p2-active');
 
-            // 2. Position Logo exactly over Home Logo
             if (homeLogo) {
                 var rect = homeLogo.getBoundingClientRect();
                 p2Logo.style.left = rect.left + 'px';
@@ -156,51 +119,41 @@
                 p2Logo.style.width = rect.width + 'px';
                 p2Logo.style.height = rect.height + 'px';
 
-                // Position Text strictly relative to Logo's center X and bottom Y
                 if (p2Text) {
                     var logoCenterX = rect.left + (rect.width / 2);
                     var logoBottomY = rect.bottom;
-
                     p2Text.style.left = logoCenterX + 'px';
-                    p2Text.style.top = (logoBottomY + 20) + 'px'; // 20px spacing
-                    // Transform handles the -50% centering
+                    p2Text.style.top = (logoBottomY + 20) + 'px';
                 }
             } else {
                 p2Logo.style.position = 'relative';
             }
 
-            // 3. Show Logo (Fade In)
             setTimeout(function () {
                 overlay.classList.add('p2-show-logo');
             }, 100);
 
-            // 4. Reveal Title & Tagline
             setTimeout(function () {
-                // overlay.classList.add('p2-reveal-bg'); // We keep BG black for now as requested
                 overlay.classList.add('p2-reveal-text');
-            }, 600); // Wait 0.6s after logo (Total ~1s delay from start)
+            }, 600);
 
-            // 5. Final Exit (Fade out content, then Cut to Home)
             setTimeout(function () {
-                // Fade out content (Logo + Text) while keeping Black BG
                 var content = document.querySelector('.p2-content');
                 if (content) {
                     content.style.transition = 'opacity 1.2s ease';
                     content.style.opacity = '0';
                 }
 
-                // Wait for content fade, then Hard Cut to Home (Remove Black BG)
                 setTimeout(function () {
                     var wrapper = document.getElementById('loader-inject-p2');
-                    var overlay = document.getElementById('phase2-overlay');
-
+                    var currentOverlay = document.getElementById('phase2-overlay');
                     if (wrapper) wrapper.remove();
-                    else if (overlay) overlay.remove();
+                    else if (currentOverlay) currentOverlay.remove();
 
                     document.body.classList.remove('zl-active');
                     document.body.classList.add('zl-done');
-                }, 1200); // 1.2s wait for content fade
-            }, 2500); // Start exit at 2.5s
+                }, 1200);
+            }, 2500);
         };
     })();
 </script>
