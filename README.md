@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="public/Assets/tp_logo.png" width="130" alt="Music Vibe" style="border-radius: 12px; margin-bottom: 16px;" />
+  <img src="public/Assets/mv-monogram.svg" width="130" alt="Music Vibe — MV monogram" style="margin-bottom: 16px;" />
 
   # MUSIC VIBE
 
